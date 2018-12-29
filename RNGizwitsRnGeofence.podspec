@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/gizwits/gizwits-rn-geo-fence"
   s.source       = { :git => "https://github.com/gizwits/gizwits-rn-geo-fence.git", :tag => "master" }
   s.source_files  = "ios/**/*.{h,m}"
-  s.resources = "ios/**/*.bundle", "ios/**/*.xib"
+  s.resources = "ios/**/*.bundle", "ios/**/*.xib", "ios/**/*.storyboard"
   s.requires_arc = true
 
   s.dependency "React"
