@@ -28,9 +28,22 @@ android {
 
 repositories {
     mavenCentral()
+    jcenter()
+    flatDir{
+        dirs 'libs'
+    }
+}
+configurations.all {
+    resolutionStrategy.force 'com.google.android.gms:play-services-base:+'
 }
 
 dependencies {
     compile 'com.facebook.react:react-native:+'
+    compile 'com.google.android.gms:play-services-maps:+'
+    compile 'com.google.android.gms:play-services-places:+'
+    compile 'com.google.android.gms:play-services-location:+'
+    compile 'com.google.code.gson:gson:2.4'
+    compile(name:'gizmap-release', ext:'aar')
 }
+
   
