@@ -47,7 +47,7 @@ import java.util.Locale;
 
 public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implements ActivityEventListener, AMapLocationListener, GeocodeSearch.OnGeocodeSearchListener {
     private String themeInfo;
-    public static final int REQUEST_CODE = 0x0ba7c0de;
+    public static final int REQUEST_CODE = 123;
     ReactApplicationContext reactContext;
 
     private Callback getCurrentLocationCallback;
@@ -71,7 +71,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
 
     @Override
     public String getName() {
-        return "RNGizwitsRnGeofenceModule";
+        return "RNGizwitsRnGeofence";
     }
 
 

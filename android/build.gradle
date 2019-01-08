@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 26
@@ -10,7 +10,6 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
-        applicationId "com.gizwtis.amap"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -23,9 +22,9 @@ android {
     }
 
 }
-configurations.all {
-    resolutionStrategy.force 'com.google.android.gms:play-services-base:+'
-}
+//configurations.all {
+//    resolutionStrategy.force 'com.google.android.gms:play-services-base:+'
+//}
 
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -33,9 +32,9 @@ dependencies {
   implementation 'com.android.support:appcompat-v7:27.1.1'
   compile 'com.facebook.react:react-native:+'
 
-  compile 'com.google.android.gms:play-services-maps:+'
-  compile 'com.google.android.gms:play-services-places:+'
-  compile 'com.google.android.gms:play-services-location:+'
+  compile 'com.google.android.gms:play-services-maps:15.0.1'
+  compile 'com.google.android.gms:play-services-places:15.0.1'
+  compile 'com.google.android.gms:play-services-location:15.0.1'
   compile 'com.google.code.gson:gson:2.4'
 
 }

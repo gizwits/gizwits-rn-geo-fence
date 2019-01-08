@@ -263,7 +263,7 @@ public abstract class EasyAdapter<T> extends BaseAdapter {
     Iterator var2 = this.selectedItems.iterator();
 
     while(var2.hasNext()) {
-      T item = var2.next();
+      T item = (T) var2.next();
       int index = this.indexOf(item);
       if (index != -1) {
         result.add(index);

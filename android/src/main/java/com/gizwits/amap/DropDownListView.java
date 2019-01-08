@@ -28,11 +28,11 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
-import com.gizwits.amap.R.dimen;
-import com.gizwits.amap.R.id;
-import com.gizwits.amap.R.layout;
-import com.gizwits.amap.R.string;
-import com.gizwits.amap.R.styleable;
+import com.reactlibrary.R.dimen;
+import com.reactlibrary.R.id;
+import com.reactlibrary.R.layout;
+import com.reactlibrary.R.string;
+import com.reactlibrary.R.styleable;
 
 public class DropDownListView extends ListView implements OnScrollListener {
   protected boolean isDropDownStyle = true;
@@ -671,7 +671,7 @@ public class DropDownListView extends ListView implements OnScrollListener {
   }
 
   private void measureHeaderLayout(View child) {
-    LayoutParams p = child.getLayoutParams();
+    ViewGroup.LayoutParams p = child.getLayoutParams();
     if (p == null) {
       p = new LayoutParams(-1, -2);
     }
