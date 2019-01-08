@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.v4.content.ContextCompat;
-import android.telecom.Call;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
@@ -36,7 +35,6 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.gizwits.amap.AMapActivity;
 import com.gizwits.amap.utils.GPSUtil;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
