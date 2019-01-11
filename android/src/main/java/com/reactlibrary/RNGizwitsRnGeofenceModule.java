@@ -24,6 +24,7 @@ import com.amap.api.services.geocoder.RegeocodeResult;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -44,10 +45,11 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
-public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implements ActivityEventListener, AMapLocationListener, GeocodeSearch.OnGeocodeSearchListener {
+public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implements ActivityEventListener,LifecycleEventListener, AMapLocationListener, GeocodeSearch.OnGeocodeSearchListener {
     private String themeInfo;
-    public static final int REQUEST_CODE = 123;
+    public  int REQUEST_CODE = 123;
     ReactApplicationContext reactContext;
 
     private Callback getCurrentLocationCallback;
@@ -66,7 +68,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
         super(reactContext);
         this.reactContext = reactContext;
         this.reactContext.addActivityEventListener(this);
-
+        this.reactContext.addLifecycleEventListener(this);
     }
 
     @Override
@@ -199,7 +201,8 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
 
         // avoid calling other phonegap apps
         mapIntent.setPackage(reactContext.getPackageName());
-        reactContext.startActivityForResult(mapIntent, REQUEST_CODE, null);
+        int requestcode = new Random().nextInt(1000);
+        reactContext.startActivityForResult(mapIntent, requestcode, null);
 
     }
 
@@ -472,7 +475,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
 
     @Override
     public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int rCode) {
-        if (getCurrentLocationCallback == null) {
+        if (getAddressInfoCallback == null) {
             return;
         }
         try {
@@ -519,10 +522,10 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent intent) {
-        if (pickAddressCallback == null) {
-            return;
-        }
-        if (requestCode == REQUEST_CODE) {
+//        if (pickAddressCallback == null) {
+//            return;
+//        }
+//        if (requestCode == REQUEST_CODE) {
             JSONObject jsonObject = null;
             try {
                 if (resultCode == Activity.RESULT_OK && intent != null) {
@@ -541,11 +544,25 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
+//        }
     }
 
     @Override
     public void onNewIntent(Intent intent) {
+
+    }
+
+    @Override
+    public void onHostResume() {
+    }
+
+    @Override
+    public void onHostPause() {
+
+    }
+
+    @Override
+    public void onHostDestroy() {
 
     }
 }

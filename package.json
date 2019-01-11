@@ -1,7 +1,7 @@
 
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,5 +16,10 @@
     "react-native": "^0.41.2",
     "react-native-windows": "0.41.0-rc.1"
 
+  },
+  "rnpm": {
+    "commands": {
+      "prelink": "node node_modules/react-native-gizwits-rn-geofence/scripts/patch"
+    }
   }
 }
