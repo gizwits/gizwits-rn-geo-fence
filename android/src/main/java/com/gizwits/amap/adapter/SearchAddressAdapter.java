@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gizwits.amap.bean.AddressItem;
-import com.reactlibrary.R;
+import com.gizwitsgeo.R;
 
 import java.util.List;
 

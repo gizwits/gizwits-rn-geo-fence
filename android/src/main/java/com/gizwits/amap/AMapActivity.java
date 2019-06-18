@@ -73,10 +73,10 @@ import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener;
 import com.google.android.gms.maps.GoogleMap.OnCameraMoveListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.reactlibrary.R;
-import com.reactlibrary.R.id;
-import com.reactlibrary.R.layout;
-import com.reactlibrary.R.mipmap;
+import com.gizwitsgeo.R;
+import com.gizwitsgeo.R.id;
+import com.gizwitsgeo.R.layout;
+import com.gizwitsgeo.R.mipmap;
 
 
 
