@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -43,6 +42,9 @@ import java.util.List;
 import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.annotation.Nullable;
+
 
 public class SearchAddressActivity extends Activity implements OnPoiSearchListener, OnClickListener {
   private static final String TAG = "SearchAddressActivity";

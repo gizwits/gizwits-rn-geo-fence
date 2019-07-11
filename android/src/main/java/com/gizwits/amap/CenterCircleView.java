@@ -9,11 +9,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
+
 import android.util.AttributeSet;
 import android.view.View;
 import com.gizwits.amap.utils.ColorUtil;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 public class CenterCircleView extends View {
   private Paint paint;
