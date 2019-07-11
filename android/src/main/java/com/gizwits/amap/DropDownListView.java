@@ -28,11 +28,11 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
-import com.reactlibrary.R.dimen;
-import com.reactlibrary.R.id;
-import com.reactlibrary.R.layout;
-import com.reactlibrary.R.string;
-import com.reactlibrary.R.styleable;
+import com.gizwitsgeo.R.dimen;
+import com.gizwitsgeo.R.id;
+import com.gizwitsgeo.R.layout;
+import com.gizwitsgeo.R.string;
+import com.gizwitsgeo.R.styleable;
 
 public class DropDownListView extends ListView implements OnScrollListener {
   protected boolean isDropDownStyle = true;
