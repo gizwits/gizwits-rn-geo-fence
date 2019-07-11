@@ -187,11 +187,11 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
     this.address_list.showNoMore();
     addressDao.closeDb();
     if (this.adapter.getCount() < 1) {
-      this.address_list.setVisibility(8);
-      this.tv_none_search.setVisibility(0);
+      this.address_list.setVisibility(View.GONE);
+      this.tv_none_search.setVisibility(View.VISIBLE);
     } else {
-      this.address_list.setVisibility(0);
-      this.tv_none_search.setVisibility(8);
+      this.address_list.setVisibility(View.VISIBLE);
+      this.tv_none_search.setVisibility(View.GONE);
     }
 
   }
@@ -227,11 +227,11 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
 
         this.adapter.add(addressItems);
         if (this.adapter.getCount() < 1) {
-          this.address_list.setVisibility(8);
-          this.tv_none_search.setVisibility(0);
+          this.address_list.setVisibility(View.GONE);
+          this.tv_none_search.setVisibility(View.VISIBLE);
         } else {
-          this.address_list.setVisibility(0);
-          this.tv_none_search.setVisibility(8);
+          this.address_list.setVisibility(View.VISIBLE);
+          this.tv_none_search.setVisibility(View.GONE);
           this.address_list.showNoMore();
         }
       } catch (IOException var9) {
@@ -260,11 +260,11 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
 
       this.adapter.add(addressItems);
       if (this.adapter.getCount() < 1) {
-        this.address_list.setVisibility(8);
-        this.tv_none_search.setVisibility(0);
+        this.address_list.setVisibility(View.GONE);
+        this.tv_none_search.setVisibility(View.VISIBLE);
       } else {
-        this.address_list.setVisibility(0);
-        this.tv_none_search.setVisibility(8);
+        this.address_list.setVisibility(View.VISIBLE);
+        this.tv_none_search.setVisibility(View.GONE);
         if (addressItems.size() < 20) {
           this.address_list.showNoMore();
         } else {

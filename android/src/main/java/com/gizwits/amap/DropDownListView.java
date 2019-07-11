@@ -124,7 +124,7 @@ public class DropDownListView extends ListView implements OnScrollListener {
       this.headerPullText = this.context.getString(string.drop_down_list_header_pull_text);
       this.headerReleaseText = this.context.getString(string.drop_down_list_header_release_text);
       this.headerLoadingText = this.context.getString(string.drop_down_list_header_loading_text);
-      LayoutInflater inflater = (LayoutInflater)this.context.getSystemService("layout_inflater");
+      LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       this.headerLayout = (RelativeLayout)inflater.inflate(layout.drop_down_list_header, this, false);
       this.headerText = (TextView)this.headerLayout.findViewById(id.drop_down_list_header_default_text);
       this.headerImage = (ImageView)this.headerLayout.findViewById(id.drop_down_list_header_image);
@@ -167,7 +167,7 @@ public class DropDownListView extends ListView implements OnScrollListener {
       this.footerDefaultText = this.context.getString(string.drop_down_list_footer_default_text);
       this.footerLoadingText = this.context.getString(string.drop_down_list_footer_loading_text);
       this.footerNoMoreText = this.context.getString(string.drop_down_list_footer_no_more_text);
-      LayoutInflater inflater = (LayoutInflater)this.context.getSystemService("layout_inflater");
+      LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       this.footerLayout = (RelativeLayout)inflater.inflate(layout.drop_down_list_footer, this, false);
       this.footerButton = (Button)this.footerLayout.findViewById(id.drop_down_list_footer_button);
       this.footerButton.setDrawingCacheBackgroundColor(0);
@@ -321,7 +321,7 @@ public class DropDownListView extends ListView implements OnScrollListener {
 
           if (this.currentScrollState == 1 && this.currentHeaderStatus != 4) {
             if (this.getFirstVisiblePosition() == 0) {
-              this.headerImage.setVisibility(0);
+              this.headerImage.setVisibility(View.VISIBLE);
               int pointBottom = this.headerOriginalHeight + this.headerReleaseMinDistance;
               if (this.headerLayout.getBottom() >= pointBottom) {
                 this.setHeaderStatusReleaseToLoad();
@@ -400,9 +400,9 @@ public class DropDownListView extends ListView implements OnScrollListener {
   public void setHeaderSecondText(CharSequence secondText) {
     if (this.isDropDownStyle) {
       if (secondText == null) {
-        this.headerSecondText.setVisibility(8);
+        this.headerSecondText.setVisibility(GONE);
       } else {
-        this.headerSecondText.setVisibility(0);
+        this.headerSecondText.setVisibility(VISIBLE);
         this.headerSecondText.setText(secondText);
       }
     }
@@ -423,7 +423,7 @@ public class DropDownListView extends ListView implements OnScrollListener {
   public void onBottomBegin() {
     if (this.isOnBottomStyle) {
       if (this.isShowFooterProgressBar) {
-        this.footerProgressBar.setVisibility(0);
+        this.footerProgressBar.setVisibility(VISIBLE);
       }
 
       this.footerTextView.setText(this.footerLoadingText);
@@ -446,7 +446,7 @@ public class DropDownListView extends ListView implements OnScrollListener {
   public void onBottomComplete() {
     if (this.isOnBottomStyle) {
       if (this.isShowFooterProgressBar) {
-        this.footerProgressBar.setVisibility(8);
+        this.footerProgressBar.setVisibility(GONE);
       }
 
       if (!this.hasMore) {
@@ -600,8 +600,8 @@ public class DropDownListView extends ListView implements OnScrollListener {
     if (this.currentHeaderStatus != 1) {
       this.resetHeaderPadding();
       this.headerImage.clearAnimation();
-      this.headerImage.setVisibility(8);
-      this.headerProgressBar.setVisibility(8);
+      this.headerImage.setVisibility(View.GONE);
+      this.headerProgressBar.setVisibility(GONE);
       this.headerText.setText(this.headerDefaultText);
       this.currentHeaderStatus = 1;
     }
@@ -610,13 +610,13 @@ public class DropDownListView extends ListView implements OnScrollListener {
 
   public void setHeaderStatusDropDownToLoad() {
     if (this.currentHeaderStatus != 2) {
-      this.headerImage.setVisibility(0);
+      this.headerImage.setVisibility(View.VISIBLE);
       if (this.currentHeaderStatus != 1) {
         this.headerImage.clearAnimation();
         this.headerImage.startAnimation(this.reverseFlipAnimation);
       }
 
-      this.headerProgressBar.setVisibility(8);
+      this.headerProgressBar.setVisibility(GONE);
       this.headerText.setText(this.headerPullText);
       if (this.isVerticalFadingEdgeEnabled()) {
         this.setVerticalScrollBarEnabled(false);
@@ -629,10 +629,10 @@ public class DropDownListView extends ListView implements OnScrollListener {
 
   public void setHeaderStatusReleaseToLoad() {
     if (this.currentHeaderStatus != 3) {
-      this.headerImage.setVisibility(0);
+      this.headerImage.setVisibility(View.VISIBLE);
       this.headerImage.clearAnimation();
       this.headerImage.startAnimation(this.flipAnimation);
-      this.headerProgressBar.setVisibility(8);
+      this.headerProgressBar.setVisibility(GONE);
       this.headerText.setText(this.headerReleaseText);
       this.currentHeaderStatus = 3;
     }
@@ -642,9 +642,9 @@ public class DropDownListView extends ListView implements OnScrollListener {
   public void setHeaderStatusLoading() {
     if (this.currentHeaderStatus != 4) {
       this.resetHeaderPadding();
-      this.headerImage.setVisibility(8);
+      this.headerImage.setVisibility(GONE);
       this.headerImage.clearAnimation();
-      this.headerProgressBar.setVisibility(0);
+      this.headerProgressBar.setVisibility(VISIBLE);
       this.headerText.setText(this.headerLoadingText);
       this.currentHeaderStatus = 4;
       this.setSelection(0);
@@ -680,9 +680,9 @@ public class DropDownListView extends ListView implements OnScrollListener {
     int lpHeight = p.height;
     int childHeightSpec;
     if (lpHeight > 0) {
-      childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight, 1073741824);
+      childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight, MeasureSpec.EXACTLY);
     } else {
-      childHeightSpec = MeasureSpec.makeMeasureSpec(0, 0);
+      childHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
     }
 
     child.measure(childWidthSpec, childHeightSpec);

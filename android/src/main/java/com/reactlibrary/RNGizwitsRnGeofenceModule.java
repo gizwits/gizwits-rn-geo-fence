@@ -67,8 +67,6 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
     public RNGizwitsRnGeofenceModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-        this.reactContext.addActivityEventListener(this);
-        this.reactContext.addLifecycleEventListener(this);
     }
 
     @Override
@@ -77,12 +75,13 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
     }
 
 
-    @ReactMethod
-    public void setThemeInfo(ReadableMap args) {
+     @ReactMethod
+    public void setThemeInfo(ReadableMap args,Callback callback) {
         JSONObject obj = readable2JsonObject(args);
         if (obj != null) {
             themeInfo = obj.toString();
         }
+//        sendResultEvent(callback,null,null);
     }
 
     @ReactMethod
@@ -203,6 +202,8 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
         mapIntent.setPackage(reactContext.getPackageName());
         int requestcode = new Random().nextInt(1000);
         reactContext.startActivityForResult(mapIntent, requestcode, null);
+        this.reactContext.addActivityEventListener(this);
+
 
     }
 
@@ -544,6 +545,9 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+        this.reactContext.removeActivityEventListener(this);
+
 //        }
     }
 
