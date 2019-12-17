@@ -164,7 +164,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         this.checkGooglePlayServices();
         this.mapView.onCreate(savedInstanceState);
         this.aMap = this.mapView.getMap();
-        aMap.setMyLocationEnabled(true);
+        aMap.setMyLocationEnabled(false);
         this.initMap();
         this.initEvent();
         this.initParams();
@@ -268,7 +268,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 100) {
             if (grantResults.length > 0 && grantResults[0] == 0) {
-                this.aMap.setMyLocationEnabled(true);
+                this.aMap.setMyLocationEnabled(false);
                 this.initParams();
             } else {
                 JSONObject json = new JSONObject();
@@ -611,7 +611,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         if (this.googlemap != null) {
             this.googlemap.setOnCameraMoveListener(this);
             this.googlemap.setOnCameraIdleListener(this);
-            this.googlemap.setMyLocationEnabled(true);
+            this.googlemap.setMyLocationEnabled(false);
             this.googlemap.setInfoWindowAdapter(this);
             this.googlemap.getUiSettings().setMyLocationButtonEnabled(false);
             this.googlemap.setOnMapClickListener(new com.google.android.gms.maps.GoogleMap.OnMapClickListener() {
