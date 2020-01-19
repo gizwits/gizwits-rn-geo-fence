@@ -1,8 +1,8 @@
 
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "2.1.7",
-  "description": "",
+  "version": "2.1.8",
+  "description": "更新2d sdk",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
