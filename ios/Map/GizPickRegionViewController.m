@@ -804,6 +804,8 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
         cell.backgroundColor = [UIColor clearColor];
         cell.imageView.tintColor = self.themeColor;
+        cell.textLabel.textColor = [UIColor blackColor];
+        cell.detailTextLabel.textColor = [UIColor blackColor];
         cell.imageView.image = [[UIImage imageNamed:@"GizRegionResource.bundle/location_icon_2"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     

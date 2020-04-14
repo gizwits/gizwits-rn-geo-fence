@@ -1,8 +1,7 @@
-
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "2.1.8",
-  "description": "更新2d sdk",
+  "version": "2.1.9",
+  "description": "适配iOS暗黑模式问题",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,7 +14,6 @@
   "peerDependencies": {
     "react-native": "^0.41.2",
     "react-native-windows": "0.41.0-rc.1"
-
   },
   "rnpm": {
     "commands": {
