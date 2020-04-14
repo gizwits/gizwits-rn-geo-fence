@@ -25,6 +25,7 @@
     [self addSubview:self.contentView];
     
     self.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.9];
+    [self.textField setTextColor:[UIColor blackColor]];
     self.clipsToBounds = YES;
     self.layer.cornerRadius = 12;
     

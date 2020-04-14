@@ -1,7 +1,7 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "1.0.0-yajun",
-  "description": "更换当前位置图标",
+  "version": "1.0.1-yajun",
+  "description": "适配暗黑模式",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
