@@ -8,7 +8,7 @@ package com.gizwits.amap.utils;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.v4.graphics.drawable.DrawableCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import android.widget.ImageView;
 
 public class ColorUtil {

@@ -145,7 +145,7 @@ public abstract class EasyAdapter<T> extends BaseAdapter {
   }
 
   public View getView(int position, View convertView, ViewGroup parent) {
-    EasyAdapter<T>.ViewHolder holder = null;
+    ViewHolder holder = null;
     if (convertView == null) {
       holder = this.newHolder();
       holder.setPosition(position);
@@ -153,7 +153,7 @@ public abstract class EasyAdapter<T> extends BaseAdapter {
       convertView = holder.init(LayoutInflater.from(this.context));
       convertView.setTag(holder);
     } else {
-      holder = (EasyAdapter.ViewHolder)convertView.getTag();
+      holder = (ViewHolder)convertView.getTag();
       holder.setPosition(position);
       holder.setSelected(this.isSelected(position));
     }
@@ -162,7 +162,7 @@ public abstract class EasyAdapter<T> extends BaseAdapter {
     return convertView;
   }
 
-  protected abstract EasyAdapter<T>.ViewHolder newHolder();
+  protected abstract ViewHolder newHolder();
 
   public int getMode() {
     return this.mode;

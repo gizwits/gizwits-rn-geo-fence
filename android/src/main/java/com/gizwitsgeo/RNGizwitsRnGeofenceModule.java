@@ -1,26 +1,34 @@
 package com.gizwitsgeo;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+
 import androidx.core.content.ContextCompat;
+
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.util.Log;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
-import com.amap.api.location.AMapLocationListener;
-import com.amap.api.maps2d.CoordinateConverter;
-import com.amap.api.maps2d.model.LatLng;
-import com.amap.api.services.core.LatLonPoint;
-import com.amap.api.services.geocoder.GeocodeResult;
-import com.amap.api.services.geocoder.GeocodeSearch;
-import com.amap.api.services.geocoder.RegeocodeAddress;
-import com.amap.api.services.geocoder.RegeocodeQuery;
-import com.amap.api.services.geocoder.RegeocodeResult;
+//import com.amap.api.location.AMapLocation;
+//import com.amap.api.location.AMapLocationClient;
+//import com.amap.api.location.AMapLocationClientOption;
+//import com.amap.api.location.AMapLocationListener;
+//import com.amap.api.maps2d.CoordinateConverter;
+//import com.amap.api.maps2d.model.LatLng;
+//import com.amap.api.services.core.LatLonPoint;
+//import com.amap.api.services.geocoder.GeocodeResult;
+//import com.amap.api.services.geocoder.GeocodeSearch;
+//import com.amap.api.services.geocoder.RegeocodeAddress;
+//import com.amap.api.services.geocoder.RegeocodeQuery;
+//import com.amap.api.services.geocoder.RegeocodeResult;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -34,8 +42,10 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+
 import com.gizwits.amap.AMapActivity;
 import com.gizwits.amap.utils.GPSUtil;
+import com.google.android.gms.location.FusedLocationProviderClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +57,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implements ActivityEventListener,LifecycleEventListener, AMapLocationListener, GeocodeSearch.OnGeocodeSearchListener {
+public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implements ActivityEventListener,LifecycleEventListener
+//        ,AMapLocationListener, GeocodeSearch.OnGeocodeSearchListener
+{
     private String themeInfo;
     public  int REQUEST_CODE = 123;
     ReactApplicationContext reactContext;
@@ -55,7 +67,8 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
     private Callback getCurrentLocationCallback;
     private Callback getAddressInfoCallback;
     private Callback pickAddressCallback;
-
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private Location mLastKnownLocation;
 
     private static final int AUTHORIZATION_STATUS_NOT_DETERMINED = 0;
     private static final int AUTHORIZATION_STATUS_DENIED = 2;
@@ -67,6 +80,8 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
     public RNGizwitsRnGeofenceModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
+        this.fusedLocationProviderClient = new FusedLocationProviderClient(reactContext);
+
     }
 
     @Override
@@ -101,18 +116,53 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
         }
     }
 
+    @SuppressLint("MissingPermission")
     @ReactMethod
     public void getCurrentLocation(Callback callback) {
         getCurrentLocationCallback = callback;
-        AMapLocationClient aMapLocationClient = new AMapLocationClient(reactContext);
-        aMapLocationClient.setLocationListener(this);
-        AMapLocationClientOption clientOption = new AMapLocationClientOption();
-        clientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        clientOption.setOnceLocation(true);
-        clientOption.setLocationCacheEnable(false);
-        aMapLocationClient.setLocationOption(clientOption);
-        aMapLocationClient.startLocation();
+//        AMapLocationClient aMapLocationClient = new AMapLocationClient(reactContext);
+//        aMapLocationClient.setLocationListener(this);
+//        AMapLocationClientOption clientOption = new AMapLocationClientOption();
+//        clientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+//        clientOption.setOnceLocation(true);
+//        clientOption.setLocationCacheEnable(false);
+//        aMapLocationClient.setLocationOption(clientOption);
+//        aMapLocationClient.startLocation();
+        LocationManager location_manager = (LocationManager)reactContext.getSystemService(Context.LOCATION_SERVICE);
+        location_manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 2000, locationListener);
+        location_manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     }
+
+    LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+//            double[] latlon = GPSUtil.gcj02_To_Gps84(location.getLatitude(), location.getLongitude());
+        JSONObject json = new JSONObject();
+        try {
+            json.put(KEY_LATITUDE, location.getLatitude());
+            json.put(KEY_LONGTITUDE, location.getLongitude());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.e("jason", "transformFromGCJToWGS :" + json.toString());
+        sendResultEvent(getCurrentLocationCallback, json, null);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
 
 
     @ReactMethod
@@ -127,20 +177,20 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
         } catch (JSONException e) {
             Log.i("CordovaLog", e.getLocalizedMessage());
         }
-        if (GPSUtil.isInArea(lat, lon)) {
-            getGPSAddressInfoFromAMap(lat, lon);
-        } else {
+//        if (GPSUtil.isInArea(lat, lon)) {
+//            getGPSAddressInfoFromAMap(lat, lon);
+//        } else {
             getGPSAdrresInfoFromGoogleMap(lat, lon);
-        }
+//        }
     }
 
-    private void getGPSAddressInfoFromAMap(double lat, double lon) {
-        GeocodeSearch geocodeSearch = new GeocodeSearch(reactContext);
-        geocodeSearch.setOnGeocodeSearchListener(this);
-        LatLonPoint latLngPoint = new LatLonPoint(lat, lon);
-        RegeocodeQuery query = new RegeocodeQuery(latLngPoint, 200, GeocodeSearch.GPS);
-        geocodeSearch.getFromLocationAsyn(query);
-    }
+//    private void getGPSAddressInfoFromAMap(double lat, double lon) {
+//        GeocodeSearch geocodeSearch = new GeocodeSearch(reactContext);
+//        geocodeSearch.setOnGeocodeSearchListener(this);
+//        LatLonPoint latLngPoint = new LatLonPoint(lat, lon);
+//        RegeocodeQuery query = new RegeocodeQuery(latLngPoint, 200, GeocodeSearch.GPS);
+//        geocodeSearch.getFromLocationAsyn(query);
+//    }
 
     private void getGPSAdrresInfoFromGoogleMap(double lat, double lon) {
         Geocoder geocoder = new Geocoder(reactContext, Locale.getDefault());
@@ -376,30 +426,30 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
 
     @ReactMethod
     private void transformFromWGSToGCJ(ReadableMap readableMap,Callback callback) {
-        JSONObject args = readable2JsonObject(readableMap);
-        double lat = 0;
-        double lon = 0;
-        try {
-            lat = args.getDouble(KEY_LATITUDE);
-            lon = args.getDouble(KEY_LONGTITUDE);
-        } catch (JSONException e) {
-            Log.i("CordovaLog", e.getLocalizedMessage());
-        }
-        LatLng latLng = new LatLng(lat, lon);
-        CoordinateConverter converter = new CoordinateConverter();
-        converter.from(CoordinateConverter.CoordType.GPS);
-        converter.coord(latLng);
-        LatLng desLatLng = converter.convert();
-        JSONObject json = new JSONObject();
-        try {
-            json.put(KEY_LATITUDE, desLatLng.latitude);
-            json.put(KEY_LONGTITUDE, desLatLng.longitude);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        Log.e("jason", "transformFromWGSToGCJ :"+json.toString());
-        sendResultEvent(callback,json,null);
+//        JSONObject args = readable2JsonObject(readableMap);
+//        double lat = 0;
+//        double lon = 0;
+//        try {
+//            lat = args.getDouble(KEY_LATITUDE);
+//            lon = args.getDouble(KEY_LONGTITUDE);
+//        } catch (JSONException e) {
+//            Log.i("CordovaLog", e.getLocalizedMessage());
+//        }
+//        LatLng latLng = new LatLng(lat, lon);
+//        CoordinateConverter converter = new CoordinateConverter();
+//        converter.from(CoordinateConverter.CoordType.GPS);
+//        converter.coord(latLng);
+//        LatLng desLatLng = converter.convert();
+//        JSONObject json = new JSONObject();
+//        try {
+//            json.put(KEY_LATITUDE, desLatLng.latitude);
+//            json.put(KEY_LONGTITUDE, desLatLng.longitude);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        Log.e("jason", "transformFromWGSToGCJ :"+json.toString());
+//        sendResultEvent(callback,json,null);
     }
 
     /**
@@ -427,99 +477,99 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
         sendResultEvent(callback,json,null);
     }
 
-    /**
-     * BD-09 转换为 GCJ-02
-     */
-    private void transformFromBaiduToGCJ(ReadableMap readableMap,Callback callback) {
-        JSONObject args = readable2JsonObject(readableMap);
-        double lat = 0;
-        double lon = 0;
-        try {
-            lat = args.getDouble(KEY_LATITUDE);
-            lon = args.getDouble(KEY_LONGTITUDE);
-        } catch (JSONException e) {
-            Log.i("CordovaLog", e.getLocalizedMessage());
-        }
-        LatLng latLng = new LatLng(lat, lon);
-        CoordinateConverter converter = new CoordinateConverter();
-        converter.from(CoordinateConverter.CoordType.BAIDU);
-        converter.coord(latLng);
-        LatLng desLatLng = converter.convert();
-        JSONObject json = new JSONObject();
-        try {
-            json.put(KEY_LATITUDE, desLatLng.latitude);
-            json.put(KEY_LONGTITUDE, desLatLng.longitude);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        sendResultEvent(callback,json,null);
-    }
+//    /**
+//     * BD-09 转换为 GCJ-02
+//     */
+//    private void transformFromBaiduToGCJ(ReadableMap readableMap,Callback callback) {
+//        JSONObject args = readable2JsonObject(readableMap);
+//        double lat = 0;
+//        double lon = 0;
+//        try {
+//            lat = args.getDouble(KEY_LATITUDE);
+//            lon = args.getDouble(KEY_LONGTITUDE);
+//        } catch (JSONException e) {
+//            Log.i("CordovaLog", e.getLocalizedMessage());
+//        }
+//        LatLng latLng = new LatLng(lat, lon);
+//        CoordinateConverter converter = new CoordinateConverter();
+//        converter.from(CoordinateConverter.CoordType.BAIDU);
+//        converter.coord(latLng);
+//        LatLng desLatLng = converter.convert();
+//        JSONObject json = new JSONObject();
+//        try {
+//            json.put(KEY_LATITUDE, desLatLng.latitude);
+//            json.put(KEY_LONGTITUDE, desLatLng.longitude);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        sendResultEvent(callback,json,null);
+//    }
 
 
-    @Override
-    public void onLocationChanged(AMapLocation aMapLocation) {
-        if (getCurrentLocationCallback == null) {
-            return;
-        }
-        double[] latlon = GPSUtil.gcj02_To_Gps84(aMapLocation.getLatitude(), aMapLocation.getLongitude());
-        JSONObject json = new JSONObject();
-        try {
-            json.put(KEY_LATITUDE, latlon[0]);
-            json.put(KEY_LONGTITUDE, latlon[1]);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.e("jason", "transformFromGCJToWGS :" + json.toString());
-        sendResultEvent(getCurrentLocationCallback, json, null);
-    }
-
-
-    @Override
-    public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int rCode) {
-        if (getAddressInfoCallback == null) {
-            return;
-        }
-        try {
-            JSONObject json = new JSONObject();
-
-            if (rCode == 1000) {
-                RegeocodeAddress regeocodeAddress = regeocodeResult.getRegeocodeAddress();
-
-                JSONArray js = new JSONArray();
-                json.put("FormattedAddressLines", js.put(regeocodeAddress.getFormatAddress()));
-//				json.put("Street", regeocodeAddress.getRoads().get(0).getName());
-//				json.put("Thoroughfare", regeocodeAddress.getRoads().get(0).getName());
-                json.put("Street", "");
-                json.put("Thoroughfare", "");
-                json.put("Name", regeocodeAddress.getBuilding());
-                json.put("City", regeocodeAddress.getCity());
-                json.put("Country", regeocodeAddress.getCountry());
-                json.put("State", regeocodeAddress.getProvince());
-                json.put("SubLocality", regeocodeAddress.getDistrict());
-                json.put("CountryCode", "");
-
-                Log.e("jason", "address:" + json.toString());
-                sendResultEvent(getAddressInfoCallback, json, null);
-            } else if (rCode == 1008) {
-                json.put("code", 8);
-                sendResultEvent(getAddressInfoCallback, null, json);
-            } else if (rCode == 1002) {
-                //key 不正确或过期
-                json.put("code", 7);
-                sendResultEvent(getAddressInfoCallback, null, json);
-            } else {
-                json.put("code", 6);
-                sendResultEvent(getAddressInfoCallback, null, json);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
-
-    }
+//    @Override
+//    public void onLocationChanged(AMapLocation aMapLocation) {
+//        if (getCurrentLocationCallback == null) {
+//            return;
+//        }
+//        double[] latlon = GPSUtil.gcj02_To_Gps84(aMapLocation.getLatitude(), aMapLocation.getLongitude());
+//        JSONObject json = new JSONObject();
+//        try {
+//            json.put(KEY_LATITUDE, latlon[0]);
+//            json.put(KEY_LONGTITUDE, latlon[1]);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        Log.e("jason", "transformFromGCJToWGS :" + json.toString());
+//        sendResultEvent(getCurrentLocationCallback, json, null);
+//    }
+//
+//
+//    @Override
+//    public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int rCode) {
+//        if (getAddressInfoCallback == null) {
+//            return;
+//        }
+//        try {
+//            JSONObject json = new JSONObject();
+//
+//            if (rCode == 1000) {
+//                RegeocodeAddress regeocodeAddress = regeocodeResult.getRegeocodeAddress();
+//
+//                JSONArray js = new JSONArray();
+//                json.put("FormattedAddressLines", js.put(regeocodeAddress.getFormatAddress()));
+////				json.put("Street", regeocodeAddress.getRoads().get(0).getName());
+////				json.put("Thoroughfare", regeocodeAddress.getRoads().get(0).getName());
+//                json.put("Street", "");
+//                json.put("Thoroughfare", "");
+//                json.put("Name", regeocodeAddress.getBuilding());
+//                json.put("City", regeocodeAddress.getCity());
+//                json.put("Country", regeocodeAddress.getCountry());
+//                json.put("State", regeocodeAddress.getProvince());
+//                json.put("SubLocality", regeocodeAddress.getDistrict());
+//                json.put("CountryCode", "");
+//
+//                Log.e("jason", "address:" + json.toString());
+//                sendResultEvent(getAddressInfoCallback, json, null);
+//            } else if (rCode == 1008) {
+//                json.put("code", 8);
+//                sendResultEvent(getAddressInfoCallback, null, json);
+//            } else if (rCode == 1002) {
+//                //key 不正确或过期
+//                json.put("code", 7);
+//                sendResultEvent(getAddressInfoCallback, null, json);
+//            } else {
+//                json.put("code", 6);
+//                sendResultEvent(getAddressInfoCallback, null, json);
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Override
+//    public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
+//
+//    }
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent intent) {

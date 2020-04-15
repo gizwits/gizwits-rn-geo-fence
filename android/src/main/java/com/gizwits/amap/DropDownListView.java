@@ -12,10 +12,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.MeasureSpec;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
@@ -28,11 +24,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
-import com.gizwitsgeo.R.dimen;
-import com.gizwitsgeo.R.id;
-import com.gizwitsgeo.R.layout;
-import com.gizwitsgeo.R.string;
-import com.gizwitsgeo.R.styleable;
+
+import com.gizwitsgeo.R;
+
 
 public class DropDownListView extends ListView implements OnScrollListener {
   protected boolean isDropDownStyle = true;
@@ -55,7 +49,7 @@ public class DropDownListView extends ListView implements OnScrollListener {
   private ProgressBar footerProgressBar;
   private Button footerButton;
   private TextView footerTextView;
-  private DropDownListView.OnDropDownListener onDropDownListener;
+  private OnDropDownListener onDropDownListener;
   protected OnScrollListener onScrollListener;
   private OnTouchListener onTouchListener;
   private float headerPaddingTopRate = 1.5F;
@@ -111,7 +105,7 @@ public class DropDownListView extends ListView implements OnScrollListener {
       }
 
     } else if (this.isDropDownStyle) {
-      this.headerReleaseMinDistance = this.context.getResources().getDimensionPixelSize(dimen.drop_down_list_header_release_min_distance);
+      this.headerReleaseMinDistance = this.context.getResources().getDimensionPixelSize(R.dimen.drop_down_list_header_release_min_distance);
       this.flipAnimation = new RotateAnimation(0.0F, 180.0F, 1, 0.5F, 1, 0.5F);
       this.flipAnimation.setInterpolator(new LinearInterpolator());
       this.flipAnimation.setDuration(250L);
@@ -120,16 +114,16 @@ public class DropDownListView extends ListView implements OnScrollListener {
       this.reverseFlipAnimation.setInterpolator(new LinearInterpolator());
       this.reverseFlipAnimation.setDuration(250L);
       this.reverseFlipAnimation.setFillAfter(true);
-      this.headerDefaultText = this.context.getString(string.drop_down_list_header_default_text);
-      this.headerPullText = this.context.getString(string.drop_down_list_header_pull_text);
-      this.headerReleaseText = this.context.getString(string.drop_down_list_header_release_text);
-      this.headerLoadingText = this.context.getString(string.drop_down_list_header_loading_text);
+      this.headerDefaultText = this.context.getString(R.string.drop_down_list_header_default_text);
+      this.headerPullText = this.context.getString(R.string.drop_down_list_header_pull_text);
+      this.headerReleaseText = this.context.getString(R.string.drop_down_list_header_release_text);
+      this.headerLoadingText = this.context.getString(R.string.drop_down_list_header_loading_text);
       LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-      this.headerLayout = (RelativeLayout)inflater.inflate(layout.drop_down_list_header, this, false);
-      this.headerText = (TextView)this.headerLayout.findViewById(id.drop_down_list_header_default_text);
-      this.headerImage = (ImageView)this.headerLayout.findViewById(id.drop_down_list_header_image);
-      this.headerProgressBar = (ProgressBar)this.headerLayout.findViewById(id.drop_down_list_header_progress_bar);
-      this.headerSecondText = (TextView)this.headerLayout.findViewById(id.drop_down_list_header_second_text);
+      this.headerLayout = (RelativeLayout)inflater.inflate(R.layout.drop_down_list_header, this, false);
+      this.headerText = (TextView)this.headerLayout.findViewById(R.id.drop_down_list_header_default_text);
+      this.headerImage = (ImageView)this.headerLayout.findViewById(R.id.drop_down_list_header_image);
+      this.headerProgressBar = (ProgressBar)this.headerLayout.findViewById(R.id.drop_down_list_header_progress_bar);
+      this.headerSecondText = (TextView)this.headerLayout.findViewById(R.id.drop_down_list_header_second_text);
       this.headerLayout.setClickable(true);
       this.headerLayout.setOnClickListener(new OnClickListener() {
         public void onClick(View v) {
@@ -164,16 +158,16 @@ public class DropDownListView extends ListView implements OnScrollListener {
       }
 
     } else if (this.isOnBottomStyle) {
-      this.footerDefaultText = this.context.getString(string.drop_down_list_footer_default_text);
-      this.footerLoadingText = this.context.getString(string.drop_down_list_footer_loading_text);
-      this.footerNoMoreText = this.context.getString(string.drop_down_list_footer_no_more_text);
+      this.footerDefaultText = this.context.getString(R.string.drop_down_list_footer_default_text);
+      this.footerLoadingText = this.context.getString(R.string.drop_down_list_footer_loading_text);
+      this.footerNoMoreText = this.context.getString(R.string.drop_down_list_footer_no_more_text);
       LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-      this.footerLayout = (RelativeLayout)inflater.inflate(layout.drop_down_list_footer, this, false);
-      this.footerButton = (Button)this.footerLayout.findViewById(id.drop_down_list_footer_button);
+      this.footerLayout = (RelativeLayout)inflater.inflate(R.layout.drop_down_list_footer, this, false);
+      this.footerButton = (Button)this.footerLayout.findViewById(R.id.drop_down_list_footer_button);
       this.footerButton.setDrawingCacheBackgroundColor(0);
       this.footerButton.setEnabled(true);
-      this.footerTextView = (TextView)this.footerLayout.findViewById(id.drop_down_list_footer_text);
-      this.footerProgressBar = (ProgressBar)this.footerLayout.findViewById(id.drop_down_list_footer_progress_bar);
+      this.footerTextView = (TextView)this.footerLayout.findViewById(R.id.drop_down_list_footer_text);
+      this.footerProgressBar = (ProgressBar)this.footerLayout.findViewById(R.id.drop_down_list_footer_progress_bar);
       this.addFooterView(this.footerLayout);
     }
   }
@@ -274,7 +268,7 @@ public class DropDownListView extends ListView implements OnScrollListener {
     this.onTouchListener = onTouchListener;
   }
 
-  public void setOnDropDownListener(DropDownListView.OnDropDownListener onDropDownListener) {
+  public void setOnDropDownListener(OnDropDownListener onDropDownListener) {
     this.onDropDownListener = onDropDownListener;
   }
 
@@ -689,10 +683,10 @@ public class DropDownListView extends ListView implements OnScrollListener {
   }
 
   private void getAttrs(Context context, AttributeSet attrs) {
-    TypedArray ta = context.obtainStyledAttributes(attrs, styleable.drop_down_list_attr);
-    this.isDropDownStyle = ta.getBoolean(styleable.drop_down_list_attr_isDropDownStyle, false);
-    this.isOnBottomStyle = ta.getBoolean(styleable.drop_down_list_attr_isOnBottomStyle, false);
-    this.isAutoLoadOnBottom = ta.getBoolean(styleable.drop_down_list_attr_isAutoLoadOnBottom, false);
+    TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.drop_down_list_attr);
+    this.isDropDownStyle = ta.getBoolean(R.styleable.drop_down_list_attr_isDropDownStyle, false);
+    this.isOnBottomStyle = ta.getBoolean(R.styleable.drop_down_list_attr_isOnBottomStyle, false);
+    this.isAutoLoadOnBottom = ta.getBoolean(R.styleable.drop_down_list_attr_isAutoLoadOnBottom, false);
     ta.recycle();
   }
 

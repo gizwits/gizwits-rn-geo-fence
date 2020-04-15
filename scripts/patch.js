@@ -5,11 +5,6 @@ const makeRecipes = require('./recipes')
 const questions = [
   {
     type: 'input',
-    name: 'gaodeKey',
-    message: 'Input the appKey for gaodemap'
-  },
-  {
-    type: 'input',
     name: 'googleKey',
     message: 'Input the appKey for googleMap'
   }

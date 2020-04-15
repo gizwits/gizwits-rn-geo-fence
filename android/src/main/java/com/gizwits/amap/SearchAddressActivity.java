@@ -22,11 +22,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
-import com.amap.api.services.core.PoiItem;
-import com.amap.api.services.poisearch.PoiResult;
-import com.amap.api.services.poisearch.PoiSearch;
-import com.amap.api.services.poisearch.PoiSearch.OnPoiSearchListener;
-import com.amap.api.services.poisearch.PoiSearch.Query;
+//import com.amap.api.services.core.PoiItem;
+//import com.amap.api.services.poisearch.PoiResult;
+//import com.amap.api.services.poisearch.PoiSearch;
+//import com.amap.api.services.poisearch.PoiSearch.OnPoiSearchListener;
+//import com.amap.api.services.poisearch.PoiSearch.Query;
 import com.gizwitsgeo.R.id;
 import com.gizwitsgeo.R.layout;
 import com.gizwits.amap.adapter.SearchAddressAdapter;
@@ -39,14 +39,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import androidx.annotation.Nullable;
 
 
-public class SearchAddressActivity extends Activity implements OnPoiSearchListener, OnClickListener {
+public class SearchAddressActivity extends Activity implements
+//        OnPoiSearchListener,
+        OnClickListener {
   private static final String TAG = "SearchAddressActivity";
   private static final int PAGE_SIZE = 20;
   private ImageView iv_left;
@@ -199,15 +201,15 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
   }
 
   private void poiSearch(int page, String str) {
-    if (this.mIsAmapDisplay) {
-      Query mPoiSearchQuery = new Query(str, "", "");
-      mPoiSearchQuery.setPageSize(20);
-      mPoiSearchQuery.setPageNum(page);
-      PoiSearch poiSearch = new PoiSearch(this, mPoiSearchQuery);
-      poiSearch.setOnPoiSearchListener(this);
-      poiSearch.searchPOIAsyn();
-    } else {
-      Geocoder geocoder = new Geocoder(this, Locale.CHINA);
+//    if (this.mIsAmapDisplay) {
+//      Query mPoiSearchQuery = new Query(str, "", "");
+//      mPoiSearchQuery.setPageSize(20);
+//      mPoiSearchQuery.setPageNum(page);
+//      PoiSearch poiSearch = new PoiSearch(this, mPoiSearchQuery);
+//      poiSearch.setOnPoiSearchListener(this);
+//      poiSearch.searchPOIAsyn();
+//    } else {
+      Geocoder geocoder = new Geocoder(this);
 
       try {
         List<AddressItem> addressItems = new ArrayList();
@@ -220,7 +222,7 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
           Log.e("SearchAddressActivity", "address:" + address.toString());
           AddressItem addressItem = new AddressItem();
           addressItem.setCity(address.getLocality());
-          addressItem.setName(address.getFeatureName());
+          addressItem.setName(TextUtils.isEmpty(address.getFeatureName())?address.getLocality():address.getFeatureName());
           addressItem.setLatitude(address.getLatitude());
           addressItem.setLongitude(address.getLongitude());
           addressItem.setAddress(address.getAddressLine(0));
@@ -239,46 +241,46 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
       } catch (IOException var9) {
         var9.printStackTrace();
       }
-    }
+//    }
 
   }
 
-  public void onPoiSearched(PoiResult result, int rCode) {
-    if (rCode == 1000 && result != null) {
-      List<PoiItem> poiItems = result.getPois();
-      List<AddressItem> addressItems = new ArrayList();
-      Iterator var5 = poiItems.iterator();
-
-      while(var5.hasNext()) {
-        PoiItem poiItem = (PoiItem)var5.next();
-        AddressItem addressItem = new AddressItem();
-        addressItem.setCity(poiItem.getCityName());
-        addressItem.setName(poiItem.getTitle());
-        addressItem.setLatitude(poiItem.getLatLonPoint().getLatitude());
-        addressItem.setLongitude(poiItem.getLatLonPoint().getLongitude());
-        addressItem.setAddress(poiItem.getSnippet());
-        addressItems.add(addressItem);
-      }
-
-      this.adapter.add(addressItems);
-      if (this.adapter.getCount() < 1) {
-        this.address_list.setVisibility(View.GONE);
-        this.tv_none_search.setVisibility(View.VISIBLE);
-      } else {
-        this.address_list.setVisibility(View.VISIBLE);
-        this.tv_none_search.setVisibility(View.GONE);
-        if (addressItems.size() < 20) {
-          this.address_list.showNoMore();
-        } else {
-          this.address_list.prepareLoad();
-        }
-      }
-    }
-
-  }
-
-  public void onPoiItemSearched(PoiItem poiItem, int i) {
-  }
+//  public void onPoiSearched(PoiResult result, int rCode) {
+//    if (rCode == 1000 && result != null) {
+//      List<PoiItem> poiItems = result.getPois();
+//      List<AddressItem> addressItems = new ArrayList();
+//      Iterator var5 = poiItems.iterator();
+//
+//      while(var5.hasNext()) {
+//        PoiItem poiItem = (PoiItem)var5.next();
+//        AddressItem addressItem = new AddressItem();
+//        addressItem.setCity(poiItem.getCityName());
+//        addressItem.setName(poiItem.getTitle());
+//        addressItem.setLatitude(poiItem.getLatLonPoint().getLatitude());
+//        addressItem.setLongitude(poiItem.getLatLonPoint().getLongitude());
+//        addressItem.setAddress(poiItem.getSnippet());
+//        addressItems.add(addressItem);
+//      }
+//
+//      this.adapter.add(addressItems);
+//      if (this.adapter.getCount() < 1) {
+//        this.address_list.setVisibility(View.GONE);
+//        this.tv_none_search.setVisibility(View.VISIBLE);
+//      } else {
+//        this.address_list.setVisibility(View.VISIBLE);
+//        this.tv_none_search.setVisibility(View.GONE);
+//        if (addressItems.size() < 20) {
+//          this.address_list.showNoMore();
+//        } else {
+//          this.address_list.prepareLoad();
+//        }
+//      }
+//    }
+//
+//  }
+//
+//  public void onPoiItemSearched(PoiItem poiItem, int i) {
+//  }
 
   public void onClick(View v) {
     if (v.getId() == id.iv_left) {

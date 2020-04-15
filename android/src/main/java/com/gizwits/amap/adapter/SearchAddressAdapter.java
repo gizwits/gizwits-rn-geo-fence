@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+
 import com.gizwits.amap.bean.AddressItem;
 import com.gizwitsgeo.R;
 
@@ -26,7 +27,7 @@ public class SearchAddressAdapter extends EasyAdapter<AddressItem> {
   }
 
   protected EasyAdapter<AddressItem>.ViewHolder newHolder() {
-    return new SearchAddressAdapter.mViewHolder();
+    return new mViewHolder();
   }
 
   private class mViewHolder extends EasyAdapter<AddressItem>.ViewHolder {

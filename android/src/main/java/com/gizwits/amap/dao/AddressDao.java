@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
+
 import com.gizwits.amap.bean.AddressItem;
 import java.util.ArrayList;
 import java.util.List;

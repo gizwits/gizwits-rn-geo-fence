@@ -1,5 +1,4 @@
 const defaultContext = {
-  gaodeKey: '<Your gaode appKey>',
   googleKey: '<Your gaode appKey>'
 
 }
@@ -20,9 +19,6 @@ module.exports = (ctx = defaultContext) => ({
   'android/**/AndroidManifest.xml': {
     pattern: `</activity>`,
     patch: `
-    <meta-data 
-          android:name="com.amap.api.v2.apikey" 
-          android:value="${ctx.gaodeKey}"/>
     <meta-data
           android:name="com.google.android.maps.v2.API_KEY"
           android:value="${ctx.googleKey}"/>

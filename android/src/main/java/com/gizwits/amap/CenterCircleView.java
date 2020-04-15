@@ -12,7 +12,9 @@ import android.graphics.Paint.Style;
 
 import android.util.AttributeSet;
 import android.view.View;
+
 import com.gizwits.amap.utils.ColorUtil;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
