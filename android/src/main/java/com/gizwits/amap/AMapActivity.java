@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.WindowManager;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -159,6 +160,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     }
 
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         super.onCreate(savedInstanceState);
         this.initView();
         this.checkGooglePlayServices();
