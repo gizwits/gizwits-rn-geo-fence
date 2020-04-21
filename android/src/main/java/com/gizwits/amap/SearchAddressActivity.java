@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 
@@ -65,6 +66,7 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
   }
 
   protected void onCreate(@Nullable Bundle savedInstanceState) {
+    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
     super.onCreate(savedInstanceState);
     this.setContentView(layout.activity_search_address);
     this.mIsAmapDisplay = this.getIntent().getBooleanExtra("isAmap", true);

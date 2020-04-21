@@ -39,6 +39,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import android.view.WindowManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,6 +68,7 @@ public class SearchAddressActivity extends Activity implements
   }
 
   protected void onCreate(@Nullable Bundle savedInstanceState) {
+    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
     super.onCreate(savedInstanceState);
     this.setContentView(layout.activity_search_address);
     this.mIsAmapDisplay = this.getIntent().getBooleanExtra("isAmap", true);
