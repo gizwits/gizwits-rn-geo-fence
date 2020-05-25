@@ -21,7 +21,10 @@ typedef void (^GizPickRegionCompletionHandler)(NSDictionary * _Nullable dict, BO
 
 @interface GizPickRegionViewController : UIViewController
 
+@property (nonatomic, strong, nullable) UIColor *textColor;
+@property (nonatomic, strong, nullable) UIColor *barColor;
 @property (nonatomic, strong, nullable) UIColor *themeColor;
+@property (nonatomic, strong, nullable) UIColor *bgColor;
 @property (nonatomic, strong, nullable) NSString *rightButtonTitle;
 @property (nonatomic, strong, nullable) NSString *searchPlaceholder;
 
@@ -37,6 +40,8 @@ typedef void (^GizPickRegionCompletionHandler)(NSDictionary * _Nullable dict, BO
 @property (nonatomic, strong, nullable) NSDictionary *regionDict;
 
 @property (nonatomic, copy, nullable) GizPickRegionCompletionHandler completionHandler;
+
+-(void)updateTheme;
 
 @end
 

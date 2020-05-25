@@ -147,6 +147,8 @@ CLLocationCoordinate2D CLLocationCoordinate2DFromNSString(NSString *string) {
 
 @property (nonatomic, strong) NSDictionary *themeDict;
 
+@property (nonatomic, strong) UINavigationController* pickerAddressNavigation;
+
 @end
 
 @implementation RNGizwitsRnGeofence
@@ -196,11 +198,12 @@ RCT_EXPORT_METHOD(requestAlwaysAuthorization:(RCTResponseSenderBlock)result){
 /*
  * 设置主题
  * setThemeInfo
- RNGizwitsRnGeofence.setThemeInfo({"themeColor": "010101", "navi_bg": "ffffff", "titleColor": "000000", "title": "标题", "right_title": "完成"}, (error, result) => {});
+ RNGizwitsRnGeofence.setThemeInfo({"themeColor": "010101", "navi_bg": "ffffff", "titleColor": "000000", "backgroundColor":"ffffff","title": "标题", "right_title": "完成"}, (error, result) => {});
  */
 RCT_EXPORT_METHOD(setThemeInfo:(NSDictionary *)info result:(RCTResponseSenderBlock)result){
   self.themeDict = info;
   GeofenceLog(@"setThemeInfo => %@", self.themeDict);
+  [self updateTheme];
   result(@[[NSNull null], GizGeoResultSuccess]);
 }
 
@@ -516,6 +519,7 @@ RCT_EXPORT_METHOD(transformFromBaiduToGCJ:(NSDictionary *)info result:(RCTRespon
   
   UINavigationController *navigationController = (UINavigationController *)[[UIStoryboard storyboardWithName:@"GizGeofence" bundle:nil] instantiateInitialViewController];
   GizPickRegionViewController *pickRegionViewController = (GizPickRegionViewController *)navigationController.topViewController;
+  self.pickerAddressNavigation = navigationController;
   
   pickRegionViewController.pickingRegion = self.isPickingRegion;
   pickRegionViewController.regionDict = self.pickedDict;
@@ -524,6 +528,7 @@ RCT_EXPORT_METHOD(transformFromBaiduToGCJ:(NSDictionary *)info result:(RCTRespon
   pickRegionViewController.completionHandler = ^(NSDictionary * _Nullable dict, BOOL canceled) {
     
     __strong __typeof(weakSelf) strongSelf = weakSelf;
+    strongSelf.pickerAddressNavigation = NULL;
     
     if (canceled) {
       // 返回
@@ -533,39 +538,92 @@ RCT_EXPORT_METHOD(transformFromBaiduToGCJ:(NSDictionary *)info result:(RCTRespon
       [strongSelf sendPickRegionWithRegionDict:dict];
     }
   };
+    
+  [self updateTheme];
   
-  // 设置主题
-  if (self.themeDict) {
-    NSString *themeColorStr = self.themeDict[@"themeColor"];
+//  // 设置主题
+//  if (self.themeDict) {
+//    NSString *themeColorStr = self.themeDict[@"themeColor"];
+//
+//    if (themeColorStr) {
+//      UIColor *color = [UIColor colorWithHexString:themeColorStr];
+//      navigationController.navigationBar.tintColor = color;
+//      pickRegionViewController.themeColor = color;
+//    }
+//
+//    NSString *naviBgColorStr = self.themeDict[@"navi_bg"];
+//
+//    if (naviBgColorStr) {
+//      navigationController.navigationBar.barTintColor = [UIColor colorWithHexString:naviBgColorStr];
+//    }
+//
+//    NSString *titleColorStr = self.themeDict[@"titleColor"];
+//
+//    if (titleColorStr) {
+//      UIColor *color = [UIColor colorWithHexString:titleColorStr];
+//
+//      if (color) {
+//        navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: color};
+//      }
+//    }
     
-    if (themeColorStr) {
-      UIColor *color = [UIColor colorWithHexString:themeColorStr];
-      navigationController.navigationBar.tintColor = color;
-      pickRegionViewController.themeColor = color;
-    }
-    
-    NSString *naviBgColorStr = self.themeDict[@"navi_bg"];
-    
-    if (naviBgColorStr) {
-      navigationController.navigationBar.barTintColor = [UIColor colorWithHexString:naviBgColorStr];
-    }
-    
-    NSString *titleColorStr = self.themeDict[@"titleColor"];
-    
-    if (titleColorStr) {
-      UIColor *color = [UIColor colorWithHexString:titleColorStr];
-      
-      if (color) {
-        navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: color};
-      }
-    }
-    
-    pickRegionViewController.title = self.themeDict[@"title"];
-    pickRegionViewController.rightButtonTitle = self.themeDict[@"right_title"];
-    pickRegionViewController.searchPlaceholder = self.themeDict[@"search_placeholder"];
-  }
+//    pickRegionViewController.title = self.themeDict[@"title"];
+//    pickRegionViewController.rightButtonTitle = self.themeDict[@"right_title"];
+//    pickRegionViewController.searchPlaceholder = self.themeDict[@"search_placeholder"];
+//  }
   
   [[self getRootVC] presentViewController:navigationController animated:YES completion:nil];
+}
+
+- (void)updateTheme{
+    // 设置主题
+    if (self.themeDict && self.pickerAddressNavigation) {
+      UINavigationController *navigationController = self.pickerAddressNavigation;
+      GizPickRegionViewController *pickRegionViewController = (GizPickRegionViewController *)navigationController.topViewController;
+      NSString *themeColorStr = self.themeDict[@"themeColor"];
+      
+      if (themeColorStr) {
+        UIColor *color = [UIColor colorWithHexString:themeColorStr];
+        navigationController.navigationBar.tintColor = color;
+        pickRegionViewController.themeColor = color;
+      }
+      
+      NSString *naviBgColorStr = self.themeDict[@"navi_bg"];
+      
+      if (naviBgColorStr) {
+        UIColor * barColor =[UIColor colorWithHexString:naviBgColorStr];
+          if(barColor){
+              navigationController.navigationBar.barTintColor = barColor;
+                      pickRegionViewController.barColor = barColor;
+          }
+      }
+      
+      NSString *titleColorStr = self.themeDict[@"titleColor"];
+      
+      if (titleColorStr) {
+        UIColor *color = [UIColor colorWithHexString:titleColorStr];
+        if (color) {
+          navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: color};
+            pickRegionViewController.textColor = color;
+        }
+      }
+        
+      NSString *bgColorStr = self.themeDict[@"backgroundColor"];
+        
+        if (bgColorStr) {
+          UIColor *bgColor = [UIColor colorWithHexString:bgColorStr];
+          if (bgColor) {
+            pickRegionViewController.bgColor = bgColor;
+          }
+        }
+        
+        
+      
+      pickRegionViewController.title = self.themeDict[@"title"];
+      pickRegionViewController.rightButtonTitle = self.themeDict[@"right_title"];
+      pickRegionViewController.searchPlaceholder = self.themeDict[@"search_placeholder"];
+      [pickRegionViewController updateTheme];
+    }
 }
 
 - (UIViewController*) getRootVC {

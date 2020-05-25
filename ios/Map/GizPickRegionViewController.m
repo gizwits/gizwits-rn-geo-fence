@@ -197,6 +197,9 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
     
     if (self) {
         _themeColor = [UIColor orangeColor];
+        _barColor = [UIColor whiteColor];
+        _textColor = [UIColor blackColor];
+        _bgColor = [UIColor whiteColor];
         _rightButtonTitle = @"确定";
         self.title = @"选取位置";
     }
@@ -207,8 +210,8 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [UIColor whiteColor];
-    
+    self.view.backgroundColor = _bgColor;
+    self.addressTableBackgroundView.backgroundColor = _bgColor;
     // 返回
     self.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"GizRegionResource.bundle/navigation_btn_back_normal"] style:UIBarButtonItemStylePlain target:self action:@selector(actionBack:)];
     self.navigationItem.leftBarButtonItem = self.backBarButtonItem;
@@ -223,6 +226,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
     // 地址搜索
     self.addressSearchView.themeColor = self.themeColor;
     self.addressSearchView.placeholder = self.searchPlaceholder;
+    self.addressSearchView.backgroundColor = [self.barColor colorWithAlphaComponent:0.9];;
     self.addressSearchView.delegate = self;
     
     self.locationManager = [[CLLocationManager alloc] init];
@@ -299,6 +303,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
     // 地址搜索
     self.localSearchCompleter = [[MKLocalSearchCompleter alloc] init];
     self.localSearchCompleter.delegate = self;
+    [self updateTheme];
 }
 
 // 将地图移动到指定坐标
@@ -517,6 +522,25 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
     }
 }
 
+-(void)setBgColor:(UIColor *)bgColor{
+    _bgColor = bgColor;
+    self.addressTableBackgroundView.backgroundColor = self.bgColor;
+}
+
+-(void)updateTheme{
+    if(self.addressSearchView){
+           self.addressSearchView.themeColor = self.themeColor;
+           self.addressSearchView.textColor = self.textColor;
+       }
+    self.addressTableBackgroundView.backgroundColor = self.bgColor;
+       if(!self.addressTableBackgroundView.hidden){
+           self.addressSearchView.backgroundColor = self.barColor;
+           [self.addressTableView reloadData];
+       } else{
+           self.addressSearchView.backgroundColor = [self.barColor colorWithAlphaComponent:0.9];
+       }
+}
+
 #pragma mark - Actions
 
 // 返回
@@ -593,6 +617,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
         [strongSelf updateAnnotationViewWithAddressDict:addressDict coordinate:coordinate shouldReadd:YES];
     }];
 }
+
 
 #pragma mark - CLLocationManagerDelegate
 
@@ -743,10 +768,10 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
 }
 
 - (void)showAddressTableView {
+    self.addressTableBackgroundView.backgroundColor = self.bgColor;
     self.addressTableBackgroundView.hidden = NO;
     self.addressTableBackgroundView.alpha = 0;
-    self.addressSearchView.backgroundColor = [UIColor whiteColor];
-    
+    self.addressSearchView.backgroundColor = self.barColor;
     [UIView animateWithDuration:0.25 animations:^{
         self.addressTableBackgroundView.alpha = 1;
     }];
@@ -756,9 +781,10 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
     [UIView animateWithDuration:0.25 animations:^{
         self.addressTableBackgroundView.alpha = 0;
     } completion:^(BOOL finished) {
+        self.addressTableBackgroundView.backgroundColor = self.bgColor;
         self.addressTableBackgroundView.hidden = YES;
         self.addressTableBackgroundView.alpha = 1;
-        self.addressSearchView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.9];
+        self.addressSearchView.backgroundColor = [self.barColor colorWithAlphaComponent:0.9];
     }];
 }
 
@@ -803,11 +829,12 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
         cell.backgroundColor = [UIColor clearColor];
-        cell.imageView.tintColor = self.themeColor;
-        cell.textLabel.textColor = [UIColor blackColor];
-        cell.detailTextLabel.textColor = [UIColor blackColor];
+//        cell.imageView.tintColor = self.themeColor;
         cell.imageView.image = [[UIImage imageNamed:@"GizRegionResource.bundle/location_icon_2"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
+    cell.textLabel.textColor = self.textColor;
+    cell.detailTextLabel.textColor = self.textColor;
+    cell.imageView.tintColor = self.themeColor;
     
     if (self.shouldShowAddressSearchHistories) {
         // 搜索历史

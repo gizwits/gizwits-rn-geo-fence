@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, nullable) NSString *placeholder;
 @property (nonatomic, strong, nullable) NSString *text;
+@property (nonatomic, strong, nullable) UIColor* textColor;
 
 @end
 

@@ -66,6 +66,11 @@
     self.searchButton.tintColor = themeColor;
 }
 
+-(void)setTextColor:(UIColor *)textColor{
+    _textColor = textColor;
+    [self.textField setTextColor:_textColor];
+}
+
 #pragma mark - Actions
 
 - (IBAction)actionSearch:(id)sender {
