@@ -1,7 +1,7 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.5",
-  "description": "iOS setThemeInfo支持实时刷新,支持backgroundColor参数",
+  "version": "3.0.6",
+  "description": "安卓增加Amap定位服务请求",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
