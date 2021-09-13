@@ -32,6 +32,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.WindowManager;
+import android.content.Context;
+import android.provider.Settings;
+import android.text.TextUtils;
+import android.provider.Settings.SettingNotFoundException;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -143,6 +150,9 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     private GeocodeSearch geocodeSearch;
     private String themeColor = "#000000";
     private MarkerOptions markerOptions;
+    private String gpsNetworkNotEnabledText = "GPS Network not enabled";
+    private String cancelText = "Cancel";
+    private String openLocationSettingsText = "Open Location Settings";
     View infoWindow;
 
     private Handler handler = new Handler() {
@@ -250,6 +260,18 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
                 if (jb.has("right_title")) {
                     this.tv_right.setText(jb.getString("right_title"));
                 }
+
+                if (jb.has("gpsNetworkNotEnabledText")) {
+                    this.gpsNetworkNotEnabledText = jb.getString("gpsNetworkNotEnabledText");
+                }
+
+                if (jb.has("openLocationSettingsText")) {
+                    this.openLocationSettingsText = jb.getString("openLocationSettingsText");
+                }
+
+                if (jb.has("cancelText")) {
+                    this.cancelText = jb.getString("cancelText");
+                }
             } catch (JSONException var7) {
                 var7.printStackTrace();
             }
@@ -263,6 +285,40 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         } else {
             ActivityCompat.requestPermissions(this, new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"}, 100);
             return false;
+        }
+    }
+
+    public boolean checkLocationEnabled(final Context context) {
+        int locationMode = 0;
+        String locationProviders;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT){
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+            } catch (SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            if (locationMode != Settings.Secure.LOCATION_MODE_OFF) {
+                return true;
+            } else {
+                new AlertDialog.Builder(context)
+                    .setMessage(this.gpsNetworkNotEnabledText)
+                    .setPositiveButton(this.openLocationSettingsText, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    })
+                    .setNegativeButton(this.cancelText, null)
+                    .show();
+                return false;
+            }
+        }else{
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
         }
     }
 
@@ -439,7 +495,9 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
                     return;
                 }
             }
-            this.aMapLocationClient.startLocation();
+            if (this.checkLocationEnabled(this)) {
+                this.aMapLocationClient.startLocation();
+            }
         } else {
             Log.e("AmapActivity", "getCurrentLocation google.");
 
