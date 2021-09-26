@@ -1,6 +1,6 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "description": "安卓增加Amap定位服务请求",
   "main": "index.js",
   "scripts": {

@@ -218,21 +218,6 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
             this.tv_title.setTextColor(titleColor);
         }
 
-        this.latitude = intent.getDoubleExtra("latitude", 0.0D);
-        this.longitude = intent.getDoubleExtra("longitude", 0.0D);
-        if (this.latitude != 0.0D && this.longitude != 0.0D && this.action.equals("pickAddress")) {
-            this.isModifyAddress = true;
-            this.transformFromWGSToGCJ(this.latitude, this.longitude);
-            if (!GPSUtil.isInArea(this.latitude, this.longitude) && this.mIsAmapDisplay && this.isSuportGooglePlay) {
-                this.changeToGoogleMapView();
-            }
-
-            this.addPinView(this.latitude, this.longitude);
-        } else {
-            this.isModifyAddress = false;
-            this.getCurrentLocation();
-        }
-
         String themeInfoStr = intent.getStringExtra("themeInfo");
         Log.e("AmapActivity", "themeInfoStr:" + themeInfoStr);
         if (themeInfoStr != null && !"".equals(themeInfoStr)) {
@@ -277,6 +262,20 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
             }
         }
 
+        this.latitude = intent.getDoubleExtra("latitude", 0.0D);
+        this.longitude = intent.getDoubleExtra("longitude", 0.0D);
+        if (this.latitude != 0.0D && this.longitude != 0.0D && this.action.equals("pickAddress")) {
+            this.isModifyAddress = true;
+            this.transformFromWGSToGCJ(this.latitude, this.longitude);
+            if (!GPSUtil.isInArea(this.latitude, this.longitude) && this.mIsAmapDisplay && this.isSuportGooglePlay) {
+                this.changeToGoogleMapView();
+            }
+
+            this.addPinView(this.latitude, this.longitude);
+        } else {
+            this.isModifyAddress = false;
+            this.getCurrentLocation(false);
+        }
     }
 
     public boolean checkPermisssion() {
@@ -288,7 +287,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         }
     }
 
-    public boolean checkLocationEnabled(final Context context) {
+    public boolean checkLocationEnabled(final Context context, boolean showLocationAlert) {
         int locationMode = 0;
         String locationProviders;
 
@@ -303,7 +302,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
 
             if (locationMode != Settings.Secure.LOCATION_MODE_OFF) {
                 return true;
-            } else {
+            } else if (showLocationAlert) {
                 new AlertDialog.Builder(context)
                     .setMessage(this.gpsNetworkNotEnabledText)
                     .setPositiveButton(this.openLocationSettingsText, new DialogInterface.OnClickListener() {
@@ -314,8 +313,8 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
                     })
                     .setNegativeButton(this.cancelText, null)
                     .show();
-                return false;
             }
+            return false;
         }else{
             locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
@@ -482,7 +481,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         this.findViewById(id.ll_search).setOnClickListener(this);
     }
 
-    private void getCurrentLocation() {
+    private void getCurrentLocation(boolean showLocationAlert) {
         if (this.mIsAmapDisplay) {
             if (this.aMap.getMyLocation() != null) {
                 double mLocationLatitude = this.aMap.getMyLocation().getLatitude();
@@ -495,7 +494,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
                     return;
                 }
             }
-            if (this.checkLocationEnabled(this)) {
+            if (this.checkLocationEnabled(this, showLocationAlert)) {
                 this.aMapLocationClient.startLocation();
             }
         } else {
@@ -739,7 +738,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     public void onClick(View v) {
         int i = v.getId();
         if (i == id.ll_location) {
-            this.getCurrentLocation();
+            this.getCurrentLocation(true);
         } else if (i == id.iv_left) {
             this.onBackPressed();
         } else if (i == id.tv_right) {
