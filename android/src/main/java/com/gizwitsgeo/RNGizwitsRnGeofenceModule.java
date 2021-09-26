@@ -527,7 +527,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
 //            return;
 //        }
 //        if (requestCode == REQUEST_CODE) {
-            JSONObject jsonObject = null;
+            JSONObject jsonObject = new JSONObject();
             try {
                 if (resultCode == Activity.RESULT_OK && intent != null) {
                     String code = intent.getStringExtra("result");
