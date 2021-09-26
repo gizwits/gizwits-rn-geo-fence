@@ -1,7 +1,7 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.7",
-  "description": "安卓增加Amap定位服务请求",
+  "version": "3.0.8",
+  "description": "androidX",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
