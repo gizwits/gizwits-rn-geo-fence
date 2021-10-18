@@ -179,7 +179,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         aMap.setMyLocationEnabled(false);
         this.initMap();
         this.initEvent();
-        this.initParams();
+        this.initParams(true);
         this.checkPermisssion();
         this.mIsAmapDisplay = true;
     }
@@ -199,7 +199,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         this.rl_map.addView(this.mapView);
     }
 
-    private void initParams() {
+    private void initParams(boolean showLocationAlert) {
         Intent intent = this.getIntent();
         this.action = intent.getStringExtra("action");
         String title = intent.getStringExtra("title");
@@ -274,7 +274,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
             this.addPinView(this.latitude, this.longitude);
         } else {
             this.isModifyAddress = false;
-            this.getCurrentLocation(false);
+            this.getCurrentLocation(showLocationAlert);
         }
     }
 
@@ -326,7 +326,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         if (requestCode == 100) {
             if (grantResults.length > 0 && grantResults[0] == 0) {
                 this.aMap.setMyLocationEnabled(false);
-                this.initParams();
+                this.initParams(false);
             } else {
                 JSONObject json = new JSONObject();
 

@@ -1,7 +1,7 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.8",
-  "description": "androidX",
+  "version": "3.0.9",
+  "description": "初始化时提示定位开关",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
