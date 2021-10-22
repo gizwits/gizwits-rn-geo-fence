@@ -39,6 +39,7 @@ import android.provider.Settings.SettingNotFoundException;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -153,6 +154,8 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     private String gpsNetworkNotEnabledText = "GPS Network not enabled";
     private String cancelText = "Cancel";
     private String openLocationSettingsText = "Open Location Settings";
+    private String permissionNotEnabledContent = "Location Permission not enabled";
+    private String openLocationPermissionText = "Open Location Permission";
     View infoWindow;
 
     private Handler handler = new Handler() {
@@ -180,7 +183,6 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         this.initMap();
         this.initEvent();
         this.initParams(true);
-        this.checkPermisssion();
         this.mIsAmapDisplay = true;
     }
 
@@ -254,6 +256,14 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
                     this.openLocationSettingsText = jb.getString("openLocationSettingsText");
                 }
 
+                if (jb.has("permissionNotEnabledContent")) {
+                    this.permissionNotEnabledContent = jb.getString("permissionNotEnabledContent");
+                }
+
+                if (jb.has("openLocationPermissionText")) {
+                    this.openLocationPermissionText = jb.getString("openLocationPermissionText");
+                }
+
                 if (jb.has("cancelText")) {
                     this.cancelText = jb.getString("cancelText");
                 }
@@ -278,7 +288,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         }
     }
 
-    public boolean checkPermisssion() {
+    public boolean checkPermisssion(final Context context) {
         if (android.os.Build.VERSION.SDK_INT <= 22 || ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == 0 && ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_COARSE_LOCATION") == 0 && ContextCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE") == 0) {
             return true;
         } else {
@@ -335,6 +345,16 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
                 } catch (JSONException var6) {
                     var6.printStackTrace();
                 }
+                new AlertDialog.Builder(AMapActivity.this)
+                    .setMessage(this.permissionNotEnabledContent)
+                    .setPositiveButton(this.openLocationPermissionText, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            AMapActivity.this.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + AMapActivity.this.getPackageName())));
+                        }
+                    })
+                    .setNegativeButton(this.cancelText, null)
+                    .show();
 
                 this.result = json.toString();
             }
@@ -495,7 +515,9 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
                 }
             }
             if (this.checkLocationEnabled(this, showLocationAlert)) {
-                this.aMapLocationClient.startLocation();
+                if (this.checkPermisssion(this)) {
+                    this.aMapLocationClient.startLocation();
+                }
             }
         } else {
             Log.e("AmapActivity", "getCurrentLocation google.");
