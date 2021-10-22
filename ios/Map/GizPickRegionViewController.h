@@ -27,6 +27,14 @@ typedef void (^GizPickRegionCompletionHandler)(NSDictionary * _Nullable dict, BO
 @property (nonatomic, strong, nullable) UIColor *bgColor;
 @property (nonatomic, strong, nullable) NSString *rightButtonTitle;
 @property (nonatomic, strong, nullable) NSString *searchPlaceholder;
+@property (nonatomic, strong, nullable) NSString *gpsNetworkNotEnabledText;
+@property (nonatomic, strong, nullable) NSString *openLocationSettingsText;
+@property (nonatomic, strong, nullable) NSString *cancelText;
+
+
+@property (nonatomic, strong, nullable) NSString *permissionNotEnabledTitle;
+@property (nonatomic, strong, nullable) NSString *permissionNotEnabledContent;
+
 
 /**
  选择区域或地址。YES = 选择区域，NO = 选择地址。

@@ -177,6 +177,16 @@ RCT_EXPORT_METHOD(getAuthorizationStatus:(RCTResponseSenderBlock)result){
 }
 
 /*
+ * 获取定位服务是否可用
+ * getLocationServerEnable
+ RNGizwitsRnGeofence.getLocationServerEnable((error, status) => {});
+ */
+RCT_EXPORT_METHOD(getLocationServerEnable:(RCTResponseSenderBlock)result){
+  BOOL status = [CLLocationManager locationServicesEnabled];
+  result(@[[NSNull null], @(status)]);
+}
+
+/*
  * 请求总是使用位置信息的权限
  * requestAlwaysAuthorization
  RNGizwitsRnGeofence.requestAlwaysAuthorization((error, result) => {});
@@ -459,6 +469,8 @@ RCT_EXPORT_METHOD(transformFromBaiduToGCJ:(NSDictionary *)info result:(RCTRespon
   // 如果传入 dict，则编辑 区域/地址；否则添加新的
   if (info && info.count) {
     self.pickedDict = info;
+  } else {
+    self.pickedDict = @{};
   }
   
   if (self.isPickingRegion) {
@@ -622,6 +634,12 @@ RCT_EXPORT_METHOD(transformFromBaiduToGCJ:(NSDictionary *)info result:(RCTRespon
       pickRegionViewController.title = self.themeDict[@"title"];
       pickRegionViewController.rightButtonTitle = self.themeDict[@"right_title"];
       pickRegionViewController.searchPlaceholder = self.themeDict[@"search_placeholder"];
+    pickRegionViewController.gpsNetworkNotEnabledText = self.themeDict[@"gpsNetworkNotEnabledText"];
+    pickRegionViewController.openLocationSettingsText = self.themeDict[@"openLocationSettingsText"];
+        pickRegionViewController.cancelText = self.themeDict[@"cancelText"];
+        
+        pickRegionViewController.permissionNotEnabledTitle = self.themeDict[@"permissionNotEnabledTitle"];
+        pickRegionViewController.permissionNotEnabledContent = self.themeDict[@"permissionNotEnabledContent"];
       [pickRegionViewController updateTheme];
     }
 }

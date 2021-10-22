@@ -18,6 +18,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <MapKit/MapKit.h>
 
+const NSInteger canleAlertViewTag = 1011;
 
 void GizLogDictionary(NSString *prefix, NSDictionary *dict) {
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:NULL];
@@ -152,7 +153,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
 
 
 
-@interface GizPickRegionViewController () <CLLocationManagerDelegate, MKMapViewDelegate, GizPinViewDelegate, GizAddressSearchViewDelegate, MKLocalSearchCompleterDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface GizPickRegionViewController () <CLLocationManagerDelegate, MKMapViewDelegate, GizPinViewDelegate, GizAddressSearchViewDelegate, MKLocalSearchCompleterDelegate, UITableViewDelegate, UITableViewDataSource,UIAlertViewDelegate>
 
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;
 
@@ -232,27 +233,30 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
     self.locationManager = [[CLLocationManager alloc] init];
     self.locationManager.delegate = self;
     
-    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
-    
-    switch (status) {
-        case kCLAuthorizationStatusNotDetermined: {
-            [self.locationManager requestAlwaysAuthorization];
+    if([CLLocationManager locationServicesEnabled]){
+        CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+        switch (status) {
+            case kCLAuthorizationStatusNotDetermined: {
+//                [self.locationManager requestAlwaysAuthorization];
+            }
+                break;
+                
+            case kCLAuthorizationStatusDenied:
+                break;
+                
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
+                self.mapView.showsUserLocation = YES;
+                break;
+                
+            case kCLAuthorizationStatusAuthorizedAlways:
+                self.mapView.showsUserLocation = YES;
+                break;
+                
+            default:
+                break;
         }
-            break;
-            
-        case kCLAuthorizationStatusDenied:
-            break;
-            
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-            self.mapView.showsUserLocation = YES;
-            break;
-            
-        case kCLAuthorizationStatusAuthorizedAlways:
-            self.mapView.showsUserLocation = YES;
-            break;
-            
-        default:
-            break;
+    } else {
+        self.mapView.showsUserLocation = NO;
     }
 }
 
@@ -314,12 +318,72 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
     if (radius <= 0) {
         mapDistance = 300 / 320.0 * CGRectGetWidth(self.view.frame);;
     } else {
-        mapDistance = radius * 2 / CGRectGetWidth(self.regionBackgroundView.frame) * CGRectGetWidth(self.view.frame);
+        if(self.regionBackgroundView){
+            mapDistance = radius * 2 / CGRectGetWidth(self.regionBackgroundView.frame) * CGRectGetWidth(self.view.frame);
+        }else {
+            mapDistance = radius*(300 / 320.0 * CGRectGetWidth(self.view.frame));
+            if(mapDistance > 5097656.25){
+                // 太大数会导致闪退，需要约束下
+                mapDistance = 5097656.25;
+            }
+        }
     }
     
     MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(coordinate, mapDistance, mapDistance);
     
     [self.mapView setRegion:region animated:animated];
+}
+
+
+-(void)showLocationServerAlert{
+    NSString* title;
+    if(self.openLocationSettingsText){
+        title = self.openLocationSettingsText;
+    } else {
+        title = @"打开定位服务";
+    }
+    NSString* message;
+    if(self.gpsNetworkNotEnabledText){
+        message = self.gpsNetworkNotEnabledText;
+    } else {
+        message = @"当前服务需要打开位置信息服务";
+    }
+    NSString* cancelText = self.rightButtonTitle;
+    if(!cancelText){
+        cancelText = @"知道了";
+    }
+    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:title message:message delegate:self cancelButtonTitle:cancelText otherButtonTitles:nil];
+    [alert show];
+}
+
+-(void)showPermissionServerAlert{
+    if(self.permissionNotEnabledTitle || self.permissionNotEnabledContent){
+        NSString* title;
+        if(self.permissionNotEnabledTitle){
+            title = self.permissionNotEnabledTitle;
+        } else {
+            title = @"";
+        }
+        NSString* message;
+        if(self.permissionNotEnabledContent){
+            message = self.permissionNotEnabledContent;
+        } else {
+            message = @"";
+        }
+        
+        NSString* cancelText = self.cancelText;
+        if(!cancelText){
+            cancelText = @"取消";
+        }
+        NSString* sureText = self.rightButtonTitle;
+        if(!sureText){
+            sureText = @"打开";
+        }
+        
+        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:title message:message delegate:self cancelButtonTitle:cancelText otherButtonTitles:sureText,nil];
+        alert.tag = canleAlertViewTag;
+        [alert show];
+    }
 }
 
 #pragma mark 家庭地址
@@ -336,8 +400,18 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
     CLLocation *location;
     
     if (!addressDict || addressDict.count == 0) {
-        location = self.mapView.userLocation.location;
-        coordinate = location.coordinate;
+        CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+        if(status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse){
+            location = self.mapView.userLocation.location;
+            coordinate = location.coordinate;
+        } else {
+            if(self.pinAnnotation){
+                [self.mapView removeAnnotation:self.pinAnnotation];
+            }
+            // 默认位置，显示阿拉善为中心点，比例尺比较大，可以完整显示出中国地图
+            CLLocationCoordinate2D defaultCoordinate = CLLocationCoordinate2DMake(37.731862969390249, 104.44265633204414);
+            [self moveMapViewTo:defaultCoordinate radius:14500.0 animated:animated];
+        }
     } else {
         coordinate.latitude = [addressDict[@"latitude"] floatValue];
         coordinate.longitude = [addressDict[@"longitude"] floatValue];
@@ -346,13 +420,15 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
         location = [[CLLocation alloc] initWithLatitude:coordinate.latitude longitude:coordinate.longitude];
     }
     
-    [self moveMapViewTo:coordinate radius:-1 animated:animated];
-    
-    __weak __typeof(self) weakSelf = self;
-    [self getAddressInfoWithLocation:location completion:^(NSDictionary *addressDict) {
-        __strong __typeof(weakSelf) strongSelf = weakSelf;
-        [strongSelf updateAnnotationViewWithAddressDict:addressDict coordinate:coordinate shouldReadd:NO];
-    }];
+    if(location){
+        [self moveMapViewTo:coordinate radius:-1 animated:animated];
+        
+        __weak __typeof(self) weakSelf = self;
+        [self getAddressInfoWithLocation:location completion:^(NSDictionary *addressDict) {
+            __strong __typeof(weakSelf) strongSelf = weakSelf;
+            [strongSelf updateAnnotationViewWithAddressDict:addressDict coordinate:coordinate shouldReadd:NO];
+        }];
+    }
 }
 
 /**
@@ -598,10 +674,22 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
 
 // 跳转到手机当前的位置
 - (IBAction)actionLocate:(id)sender {
-    if (self.pickingRegion) {
-        [self updateMapViewWithRegionDict:nil animated:YES];
+    if([CLLocationManager locationServicesEnabled]){
+        CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+        if(status == kCLAuthorizationStatusAuthorizedWhenInUse || status == kCLAuthorizationStatusAuthorizedAlways){
+            if (self.pickingRegion) {
+                [self updateMapViewWithRegionDict:nil animated:YES];
+            } else {
+                [self updateMapViewWithAddressDict:nil animated:YES];
+            }
+        } else {
+            // 没权限，暂时不做任何动作
+            [self showPermissionServerAlert];
+        }
+       
     } else {
-        [self updateMapViewWithAddressDict:nil animated:YES];
+        self.mapView.showsUserLocation = NO;
+        [self showLocationServerAlert];
     }
 }
 
@@ -622,22 +710,34 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
 #pragma mark - CLLocationManagerDelegate
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    
-    switch (status) {
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-        case kCLAuthorizationStatusAuthorizedAlways:
-            self.mapView.showsUserLocation = YES;
-            break;
-            
-        default:
-            break;
+    if([CLLocationManager locationServicesEnabled]){
+        switch (status) {
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
+            case kCLAuthorizationStatusAuthorizedAlways:
+                self.mapView.showsUserLocation = YES;
+                break;
+            case kCLAuthorizationStatusNotDetermined:
+            case kCLAuthorizationStatusDenied:
+                if(!self.regionDict){
+                    // 没有位置信息的话，才提示没权限
+                    [self showPermissionServerAlert];
+                }
+                break;
+                
+            default:
+                break;
+        }
+    } else {
+        // 定位服务不可用，直接弹窗提示
+        self.mapView.showsUserLocation = NO;
+        if(!self.regionDict){
+            [self showLocationServerAlert];
+        }
     }
 }
 
 #pragma mark - MKMapViewDelegate
-
-- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
-    
+- (void)mapViewDidFinishLoadingMap:(MKMapView *)mapView{
     if (self.hasInitializedMapView) {
         return;
     }
@@ -649,6 +749,21 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
     } else {
         [self updateMapViewWithAddressDict:self.regionDict animated:NO];
     }
+}
+
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
+    
+//    if (self.hasInitializedMapView) {
+//        return;
+//    }
+//
+//    self.hasInitializedMapView = YES;
+//
+//    if (self.pickingRegion) {
+//        [self updateMapViewWithRegionDict:self.regionDict animated:NO];
+//    } else {
+//        [self updateMapViewWithAddressDict:self.regionDict animated:NO];
+//    }
 }
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
@@ -787,6 +902,25 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
         self.addressSearchView.backgroundColor = [self.barColor colorWithAlphaComponent:0.9];
     }];
 }
+
+#pragma mark - UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(alertView.tag == canleAlertViewTag){
+        NSLog(@"clickedButtonAtIndex:%d",buttonIndex);
+        if(buttonIndex == 1){
+            // 确定按钮
+            CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+            if(status == kCLAuthorizationStatusNotDetermined){
+                [self.locationManager requestAlwaysAuthorization];
+            } else if(status == kCLAuthorizationStatusDenied){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                });
+            }
+        }
+    }
+}
+
 
 #pragma mark - MKLocalSearchCompleterDelegate
 
