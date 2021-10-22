@@ -74,6 +74,8 @@ import com.gizwits.amap.bean.AddressItem;
 import com.gizwits.amap.utils.ColorUtil;
 import com.gizwits.amap.utils.GPSUtil;
 import com.gizwits.amap.utils.UIUtils;
+import com.gizwits.amap.utils.GPSPresenter;
+import com.gizwits.amap.utils.GPSInterface;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.GoogleMap;
@@ -96,7 +98,7 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AMapActivity extends Activity implements OnCameraMoveListener, OnMapReadyCallback, OnCameraIdleListener, AMapLocationListener, OnGeocodeSearchListener, InfoWindowAdapter, com.google.android.gms.maps.GoogleMap.InfoWindowAdapter, OnClickListener {
+public class AMapActivity extends Activity implements OnCameraMoveListener, OnMapReadyCallback, OnCameraIdleListener, AMapLocationListener, OnGeocodeSearchListener, InfoWindowAdapter, com.google.android.gms.maps.GoogleMap.InfoWindowAdapter, OnClickListener, GPSInterface {
     private static final int PERMISSION_CODE = 100;
     private static final String TAG = "AmapActivity";
     public static final String ADDRESS_ITEM = "addressItem";
@@ -154,6 +156,8 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     private String cancelText = "Cancel";
     private String openLocationSettingsText = "Open Location Settings";
     View infoWindow;
+    private GPSPresenter gps_presenter;
+    MyLocationStyle myLocationStyle;
 
     private Handler handler = new Handler() {
         public void handleMessage(Message message) {
@@ -177,11 +181,17 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         this.mapView.onCreate(savedInstanceState);
         this.aMap = this.mapView.getMap();
         aMap.setMyLocationEnabled(false);
+        myLocationStyle = new MyLocationStyle();
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+        myLocationStyle.showMyLocation(false);
+        aMap.setMyLocationStyle(myLocationStyle);
+
         this.initMap();
         this.initEvent();
         this.initParams(true);
         this.checkPermisssion();
         this.mIsAmapDisplay = true;
+        gps_presenter = new GPSPresenter( this , this ) ;
     }
 
     private void initView() {
@@ -325,7 +335,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 100) {
             if (grantResults.length > 0 && grantResults[0] == 0) {
-                this.aMap.setMyLocationEnabled(false);
+                this.aMap.setMyLocationEnabled(true);
                 this.initParams(false);
             } else {
                 JSONObject json = new JSONObject();
@@ -450,10 +460,25 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
         this.mapView.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void gpsSwitchState(boolean gpsOpen) {
+        if ( gpsOpen ){
+            Toast.makeText(this, " 手机GPS 打开", Toast.LENGTH_SHORT).show();
+            if (this.latitude != 0.0D && this.longitude != 0.0D && this.action.equals("pickAddress")) {
+                // 设置了家庭地址，不需要定位
+            } else {
+                this.getCurrentLocation(true);
+            }
+        }
+    }
+
     protected void onDestroy() {
         super.onDestroy();
         if (this.mapView != null) {
             this.mapView.onDestroy();
+        }
+        if ( gps_presenter != null ){
+            gps_presenter.onDestroy();
         }
 
         if (this.mGoogleMapView != null) {
@@ -482,6 +507,8 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     }
 
     private void getCurrentLocation(boolean showLocationAlert) {
+        System.out.println("Amap Test this.mIsAmapDisplay" + this.mIsAmapDisplay);
+
         if (this.mIsAmapDisplay) {
             if (this.aMap.getMyLocation() != null) {
                 double mLocationLatitude = this.aMap.getMyLocation().getLatitude();
@@ -494,6 +521,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
                     return;
                 }
             }
+            System.out.println("Amap Test getMyLocation is None");
             if (this.checkLocationEnabled(this, showLocationAlert)) {
                 this.aMapLocationClient.startLocation();
             }
