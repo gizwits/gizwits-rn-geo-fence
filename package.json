@@ -1,7 +1,7 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.10",
-  "description": "安卓打开定位开关自动定位",
+  "version": "3.0.14",
+  "description": "修复android 权限相关行为",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
