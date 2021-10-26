@@ -1,6 +1,6 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.14",
+  "version": "3.0.15",
   "description": "修复android 权限相关行为",
   "main": "index.js",
   "scripts": {

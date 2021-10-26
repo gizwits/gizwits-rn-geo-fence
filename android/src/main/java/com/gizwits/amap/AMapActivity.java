@@ -535,9 +535,10 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if ( gpsOpen ){
       if (gpsSwitchBuilder != null) {
         gpsSwitchBuilder.dismiss();
+        getCurrentLocation(true);
+      } else {
+        getCurrentLocationWithNotSetAddress();
       }
-      // Toast.makeText(this, " 手机GPS 打开", Toast.LENGTH_SHORT).show();
-      getCurrentLocationWithNotSetAddress();
     }
   }
 
