@@ -254,6 +254,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
         default:
             break;
     }
+    self.locateButton.hidden = !self.mapView.showsUserLocation;
 }
 
 - (void)initMapView {
@@ -623,15 +624,21 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     
-    switch (status) {
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-        case kCLAuthorizationStatusAuthorizedAlways:
-            self.mapView.showsUserLocation = YES;
-            break;
-            
-        default:
-            break;
+    if([CLLocationManager locationServicesEnabled]){
+        switch (status) {
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
+            case kCLAuthorizationStatusAuthorizedAlways:
+                self.mapView.showsUserLocation = YES;
+                break;
+                
+            default:
+                self.mapView.showsUserLocation = NO;
+                break;
+        }
+    } else {
+        self.mapView.showsUserLocation = NO;
     }
+    self.locateButton.hidden = !self.mapView.showsUserLocation;
 }
 
 #pragma mark - MKMapViewDelegate
