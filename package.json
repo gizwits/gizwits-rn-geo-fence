@@ -1,6 +1,6 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.10",
+  "version": "3.0.0-sanxiong",
   "description": "安卓打开定位开关自动定位",
   "main": "index.js",
   "scripts": {
