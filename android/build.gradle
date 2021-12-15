@@ -28,7 +28,7 @@ android {
 
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
-  implementation files('libs/AMap_Location_V4.7.1_20190803.jar')
+  implementation files('libs/AMap_Location_V5.5.1_20211008.jar')
   implementation files('libs/Amap_2DMap_V6.0.0_20191106.jar')
   implementation files('libs/AMap_Search_V6.9.3_20190722.jar')
   implementation 'com.android.support:appcompat-v7:27.1.1'

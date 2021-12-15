@@ -258,6 +258,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
     } else {
         self.mapView.showsUserLocation = NO;
     }
+    self.locateButton.hidden = !self.mapView.showsUserLocation;
 }
 
 - (void)initMapView {
@@ -734,6 +735,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
             [self showLocationServerAlert];
         }
     }
+    self.locateButton.hidden = !self.mapView.showsUserLocation;
 }
 
 #pragma mark - MKMapViewDelegate

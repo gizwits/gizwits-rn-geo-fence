@@ -68,6 +68,10 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
     super.onCreate(savedInstanceState);
+    if (savedInstanceState != null) {
+      onBackPressed();
+      return;
+    }
     this.setContentView(layout.activity_search_address);
     this.mIsAmapDisplay = this.getIntent().getBooleanExtra("isAmap", true);
     this.initView();
