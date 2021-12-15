@@ -203,7 +203,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     this.checkPermisssion(this);
     this.initMap();
     this.initEvent();
-    this.initParams(true);
+    this.initParams();
     this.mIsAmapDisplay = true;
     gps_presenter = new GPSPresenter( this , this ) ;
 
@@ -224,7 +224,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     this.rl_map.addView(this.mapView);
   }
 
-  private void initParams(boolean showLocationAlert) {
+  private void initParams() {
     Intent intent = this.getIntent();
     this.action = intent.getStringExtra("action");
     String title = intent.getStringExtra("title");
@@ -307,7 +307,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
       this.addPinView(this.latitude, this.longitude);
     } else {
       this.isModifyAddress = false;
-      this.getCurrentLocation(showLocationAlert);
+      this.getCurrentLocation();
     }
   }
 
@@ -315,17 +315,14 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     // 记录当前的权限状态
     hasPermission = hasLocationPermission(context);
     if (hasPermission) {
-      if (locationPermission != null) {
-        locationPermission.dismiss();
-      }
-      return true;
+      return this.checkLocationEnabled(context);
     } else {
       ActivityCompat.requestPermissions(this, new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"}, 100);
       return false;
     }
   }
 
-  public boolean checkLocationEnabled(final Context context, boolean showLocationAlert) {
+  public boolean checkLocationEnabled(final Context context) {
     int locationMode = 0;
     String locationProviders;
 
@@ -340,7 +337,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
 
       if (locationMode != Settings.Secure.LOCATION_MODE_OFF) {
         return true;
-      } else if (showLocationAlert) {
+      } else {
         if (gpsSwitchBuilder !=null) {
           gpsSwitchBuilder.dismiss();
           gpsSwitchBuilder = null;
@@ -368,7 +365,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if (requestCode == 100) {
       if (grantResults.length > 0) {
         if (grantResults[0] == 0) {
-          this.initParams(false);
+          this.initParams();
         } else {
           if (locationPermission != null) {
             locationPermission.dismiss();
@@ -478,7 +475,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if (currentPermission) {
       if (locationPermission != null) {
         locationPermission.dismiss();
-        getCurrentLocation(true);
+        getCurrentLocation();
       }
     }
 
@@ -526,7 +523,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if (this.latitude != 0.0D && this.longitude != 0.0D && this.action.equals("pickAddress")) {
       // 设置了家庭地址，不需要定位
     } else {
-      this.getCurrentLocation(true);
+      this.getCurrentLocation();
     }
   }
 
@@ -535,7 +532,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if ( gpsOpen ){
       if (gpsSwitchBuilder != null) {
         gpsSwitchBuilder.dismiss();
-        getCurrentLocation(true);
+        getCurrentLocation();
       } else {
         getCurrentLocationWithNotSetAddress();
       }
@@ -565,7 +562,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     this.result = String.valueOf(1);
     Intent intent = new Intent();
     intent.putExtra("result", this.result);
-    this.setResult(-1, intent);
+    this.setResult(-1, null);
     this.finish();
   }
 
@@ -576,26 +573,25 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     this.findViewById(id.ll_search).setOnClickListener(this);
   }
 
-  private void getCurrentLocation(boolean showLocationAlert) {
+  private void getCurrentLocation() {
     System.out.println("Amap Test this.mIsAmapDisplay" + this.mIsAmapDisplay);
 
     if (this.mIsAmapDisplay) {
-      if (this.aMap.getMyLocation() != null) {
-        double mLocationLatitude = this.aMap.getMyLocation().getLatitude();
-        double mLocationLongitude = this.aMap.getMyLocation().getLongitude();
-        Log.e("AmapActivity", "getCurrentLocation Amap." + " " + mLocationLatitude + " " + mLocationLongitude);
-        if (mLocationLatitude != 0 && mLocationLatitude != 0) {
-          CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(new LatLng(mLocationLatitude, mLocationLongitude), 17);
-          aMap.moveCamera(cu);
-          addPinView(mLocationLatitude, mLocationLongitude);
-          return;
-        }
-      }
+      
       System.out.println("Amap Test getMyLocation is None");
-      if (this.checkLocationEnabled(this, showLocationAlert)) {
-        if (this.checkPermisssion(this)) {
-          this.aMapLocationClient.startLocation();
+      if (this.checkPermisssion(this)) {
+        if (this.aMap.getMyLocation() != null) {
+          double mLocationLatitude = this.aMap.getMyLocation().getLatitude();
+          double mLocationLongitude = this.aMap.getMyLocation().getLongitude();
+          Log.e("AmapActivity", "getCurrentLocation Amap." + " " + mLocationLatitude + " " + mLocationLongitude);
+          if (mLocationLatitude != 0 && mLocationLatitude != 0) {
+            CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(new LatLng(mLocationLatitude, mLocationLongitude), 17);
+            aMap.moveCamera(cu);
+            addPinView(mLocationLatitude, mLocationLongitude);
+            return;
+          }
         }
+        this.aMapLocationClient.startLocation();
       }
     } else {
       Log.e("AmapActivity", "getCurrentLocation google.");
@@ -838,7 +834,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
   public void onClick(View v) {
     int i = v.getId();
     if (i == id.ll_location) {
-      this.getCurrentLocation(true);
+      this.getCurrentLocation();
     } else if (i == id.iv_left) {
       this.onBackPressed();
     } else if (i == id.tv_right) {
