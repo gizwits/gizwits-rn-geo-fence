@@ -409,9 +409,9 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
             if(self.pinAnnotation){
                 [self.mapView removeAnnotation:self.pinAnnotation];
             }
-            // 默认位置，显示阿拉善为中心点，比例尺比较大，可以完整显示出中国地图
-            CLLocationCoordinate2D defaultCoordinate = CLLocationCoordinate2DMake(37.731862969390249, 104.44265633204414);
-            [self moveMapViewTo:defaultCoordinate radius:14500.0 animated:animated];
+            // 默认位置，显示故宫为中心点
+            CLLocationCoordinate2D defaultCoordinate = CLLocationCoordinate2DMake(39.917305169773726, 116.39707945810558);
+            [self moveMapViewTo:defaultCoordinate radius:1.0 animated:animated];
         }
     } else {
         coordinate.latitude = [addressDict[@"latitude"] floatValue];
