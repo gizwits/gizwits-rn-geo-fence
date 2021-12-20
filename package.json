@@ -1,7 +1,7 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.4-sanxiong",
-  "description": "去掉iOS回到当前位置按钮根据定位权限显示",
+  "version": "3.0.5-sanxiong",
+  "description": "iOS没有传入定位值的时候，不显示用户当前位置",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

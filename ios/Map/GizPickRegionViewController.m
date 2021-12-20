@@ -245,18 +245,18 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
                 break;
                 
             case kCLAuthorizationStatusAuthorizedWhenInUse:
-                self.mapView.showsUserLocation = YES;
+                // self.mapView.showsUserLocation = YES;
                 break;
                 
             case kCLAuthorizationStatusAuthorizedAlways:
-                self.mapView.showsUserLocation = YES;
+                // self.mapView.showsUserLocation = YES;
                 break;
                 
             default:
                 break;
         }
     } else {
-        self.mapView.showsUserLocation = NO;
+        // self.mapView.showsUserLocation = NO;
     }
 }
 
@@ -688,7 +688,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
         }
        
     } else {
-        self.mapView.showsUserLocation = NO;
+        // self.mapView.showsUserLocation = NO;
         [self showLocationServerAlert];
     }
 }
@@ -714,7 +714,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
         switch (status) {
             case kCLAuthorizationStatusAuthorizedWhenInUse:
             case kCLAuthorizationStatusAuthorizedAlways:
-                self.mapView.showsUserLocation = YES;
+                // self.mapView.showsUserLocation = YES;
                 break;
             case kCLAuthorizationStatusNotDetermined:
             case kCLAuthorizationStatusDenied:
@@ -729,7 +729,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
         }
     } else {
         // 定位服务不可用，直接弹窗提示
-        self.mapView.showsUserLocation = NO;
+        // self.mapView.showsUserLocation = NO;
         if(!self.regionDict){
             [self showLocationServerAlert];
         }
