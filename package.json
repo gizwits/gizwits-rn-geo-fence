@@ -1,7 +1,7 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.2-sanxiong",
-  "description": "修正安卓权限提示方式",
+  "version": "3.0.5-sanxiong",
+  "description": "修正安卓状态栏",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

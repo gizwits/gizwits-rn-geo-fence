@@ -35,7 +35,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Color;
 import android.view.WindowManager;
+import android.view.Window;
+import android.os.Build;
 import android.content.Context;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -207,6 +210,16 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     this.mIsAmapDisplay = true;
     gps_presenter = new GPSPresenter( this , this ) ;
 
+    //make fully Android Transparent Status bar
+    if (Build.VERSION.SDK_INT >= 21) {
+      Window window = this.getWindow();
+      window.setStatusBarColor(Color.TRANSPARENT);
+      View decor = window.getDecorView();
+      int ui = decor.getSystemUiVisibility();
+      ui |=View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+      decor.setSystemUiVisibility(ui);
+    }
+
   }
 
   private void initView() {
@@ -307,7 +320,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
       this.addPinView(this.latitude, this.longitude);
     } else {
       this.isModifyAddress = false;
-      this.getCurrentLocation();
+      // this.getCurrentLocation();
     }
   }
 
@@ -475,7 +488,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if (currentPermission) {
       if (locationPermission != null) {
         locationPermission.dismiss();
-        getCurrentLocation();
+        // getCurrentLocation();
       }
     }
 
@@ -532,9 +545,9 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if ( gpsOpen ){
       if (gpsSwitchBuilder != null) {
         gpsSwitchBuilder.dismiss();
-        getCurrentLocation();
+        // getCurrentLocation();
       } else {
-        getCurrentLocationWithNotSetAddress();
+        // getCurrentLocationWithNotSetAddress();
       }
     }
   }

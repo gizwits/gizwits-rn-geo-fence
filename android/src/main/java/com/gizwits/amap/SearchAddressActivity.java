@@ -19,6 +19,10 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.graphics.Color;
+import android.view.WindowManager;
+import android.view.Window;
+import android.os.Build;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -78,6 +82,15 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
     this.initEvent();
     this.initParams();
     this.loadAddressSearchRecodes();
+
+    if (Build.VERSION.SDK_INT >= 21) {
+      Window window = this.getWindow();
+      window.setStatusBarColor(Color.TRANSPARENT);
+      View decor = window.getDecorView();
+      int ui = decor.getSystemUiVisibility();
+      ui |=View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+      decor.setSystemUiVisibility(ui);
+    }
   }
 
   private void initView() {
