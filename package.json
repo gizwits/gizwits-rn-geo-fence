@@ -1,6 +1,6 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.5-sanxiong",
+  "version": "3.0.6-sanxiong",
   "description": "修正安卓状态栏",
   "main": "index.js",
   "scripts": {
