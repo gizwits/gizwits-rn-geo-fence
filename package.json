@@ -1,7 +1,7 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.7-sanxiong",
-  "description": "iOS没有传入定位值的时候，不显示用户当前位置",
+  "version": "3.0.8-sanxiong",
+  "description": "只有拒绝不再提示的时候才显示app的提示",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
