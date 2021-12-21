@@ -99,7 +99,7 @@ import com.gizwitsgeo.R.id;
 import com.gizwitsgeo.R.layout;
 import com.gizwitsgeo.R.mipmap;
 
-
+import java.io.Console;
 import java.util.List;
 import java.util.Locale;
 
@@ -166,6 +166,9 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
   private String permissionNotEnabledContent = "Location Permission not enabled";
   private String openLocationPermissionText = "Open Location Permission";
   private boolean hasPermission = false;
+
+  long startCheckPermissionTime = 0;
+
   View infoWindow;
   private GPSPresenter gps_presenter;
   MyLocationStyle myLocationStyle;
@@ -203,7 +206,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     myLocationStyle.showMyLocation(false);
     myLocationStyle.interval(2000);
     aMap.setMyLocationStyle(myLocationStyle);
-    this.checkPermisssion(this);
+    // this.checkPermisssion(this);
     this.initMap();
     this.initEvent();
     this.initParams();
@@ -329,10 +332,11 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     hasPermission = hasLocationPermission(context);
     if (hasPermission) {
       return this.checkLocationEnabled(context);
-    } else {
+    } else{
+      this.startCheckPermissionTime = System.currentTimeMillis();
       ActivityCompat.requestPermissions(this, new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"}, 100);
-      return false;
     }
+    return false;
   }
 
   public boolean checkLocationEnabled(final Context context) {
@@ -375,25 +379,32 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
 
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    long currentTime = System.currentTimeMillis();
+    boolean canShow = currentTime - this.startCheckPermissionTime < 100;
+    // 100ms内都可以认为是直接被系统驳回了，这个时候就可以弹APP的提示（客户需求）
     if (requestCode == 100) {
       if (grantResults.length > 0) {
         if (grantResults[0] == 0) {
           this.initParams();
+          getCurrentLocation();
         } else {
           if (locationPermission != null) {
             locationPermission.dismiss();
             locationPermission = null;
           }
-          locationPermission = new AlertDialog.Builder(AMapActivity.this)
-            .setMessage(this.permissionNotEnabledContent)
-            .setPositiveButton(this.openLocationPermissionText, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                AMapActivity.this.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + AMapActivity.this.getPackageName())));
-              }
-            })
-            .setNegativeButton(this.cancelText, null)
-            .show();
+          if (canShow){
+            //用户永久拒绝了权限
+            locationPermission = new AlertDialog.Builder(AMapActivity.this)
+              .setMessage(this.permissionNotEnabledContent)
+              .setPositiveButton(this.openLocationPermissionText, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                  AMapActivity.this.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + AMapActivity.this.getPackageName())));
+                }
+              })
+              .setNegativeButton(this.cancelText, null)
+              .show();
+          }
         }
       } else {
         JSONObject json = new JSONObject();
@@ -488,7 +499,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if (currentPermission) {
       if (locationPermission != null) {
         locationPermission.dismiss();
-        // getCurrentLocation();
+        getCurrentLocation();
       }
     }
 
@@ -532,6 +543,12 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     return value;
   }
 
+  // 检查是否可以询问权限
+  private boolean shouldShowRequestPermissionRationale() {
+    boolean value = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+    return value;
+  }
+
   private void getCurrentLocationWithNotSetAddress() {
     if (this.latitude != 0.0D && this.longitude != 0.0D && this.action.equals("pickAddress")) {
       // 设置了家庭地址，不需要定位
@@ -545,9 +562,9 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if ( gpsOpen ){
       if (gpsSwitchBuilder != null) {
         gpsSwitchBuilder.dismiss();
-        // getCurrentLocation();
+        getCurrentLocation();
       } else {
-        // getCurrentLocationWithNotSetAddress();
+        getCurrentLocationWithNotSetAddress();
       }
     }
   }
@@ -590,7 +607,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     System.out.println("Amap Test this.mIsAmapDisplay" + this.mIsAmapDisplay);
 
     if (this.mIsAmapDisplay) {
-      
+
       System.out.println("Amap Test getMyLocation is None");
       if (this.checkPermisssion(this)) {
         if (this.aMap.getMyLocation() != null) {
