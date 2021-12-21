@@ -1,6 +1,6 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.5-sanxiong",
+  "version": "3.0.7-sanxiong",
   "description": "iOS没有传入定位值的时候，不显示用户当前位置",
   "main": "index.js",
   "scripts": {
