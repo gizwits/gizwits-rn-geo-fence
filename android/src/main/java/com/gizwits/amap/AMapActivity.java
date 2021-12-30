@@ -329,12 +329,14 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
 
   public boolean checkPermisssion(final Context context) {
     // 记录当前的权限状态
-    hasPermission = hasLocationPermission(context);
-    if (hasPermission) {
-      return this.checkLocationEnabled(context);
-    } else{
-      this.startCheckPermissionTime = System.currentTimeMillis();
-      ActivityCompat.requestPermissions(this, new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"}, 100);
+    boolean locationEnabled = checkLocationEnabled(context);
+    if (locationEnabled) {
+      hasPermission = hasLocationPermission(context);
+      if (!hasPermission) {
+        this.startCheckPermissionTime = System.currentTimeMillis();
+        ActivityCompat.requestPermissions(this, new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"}, 100);
+      }
+      return hasPermission;
     }
     return false;
   }

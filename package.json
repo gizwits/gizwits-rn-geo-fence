@@ -1,6 +1,6 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.8-sanxiong",
+  "version": "3.0.9-sanxiong",
   "description": "只有拒绝不再提示的时候才显示app的提示",
   "main": "index.js",
   "scripts": {
