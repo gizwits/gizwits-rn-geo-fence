@@ -189,6 +189,8 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
 @property (nonatomic, assign) BOOL shouldShowAddressSearchHistories;
 @property (nonatomic, strong, nullable) NSMutableArray<NSDictionary *> *addressSearchHistories;
 
+@property (nonatomic, assign) int clickUserLocaltion; // 记录用户是否点击回到当前定位按钮
+
 @end
 
 @implementation GizPickRegionViewController
@@ -202,6 +204,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
         _textColor = [UIColor blackColor];
         _bgColor = [UIColor whiteColor];
         _rightButtonTitle = @"确定";
+        self.clickUserLocaltion = -1;
         self.title = @"选取位置";
     }
     
@@ -678,6 +681,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
 
 // 跳转到手机当前的位置
 - (IBAction)actionLocate:(id)sender {
+    self.clickUserLocaltion = 1;
     if([CLLocationManager locationServicesEnabled]){
         CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
         if(status == kCLAuthorizationStatusAuthorizedWhenInUse || status == kCLAuthorizationStatusAuthorizedAlways){
@@ -705,7 +709,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
 
 // 【家庭地址】点击地图时，更新大头针的位置及地址信息
 - (void)actionTapMapView:(UIGestureRecognizer *)sender {
-    
+    self.clickUserLocaltion = -1;
     CGPoint point = [sender locationInView:self.mapView];
     CLLocationCoordinate2D coordinate = [self.mapView convertPoint:point toCoordinateFromView:self.mapView];
     
@@ -724,6 +728,9 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
         switch (status) {
             case kCLAuthorizationStatusAuthorizedWhenInUse:
             case kCLAuthorizationStatusAuthorizedAlways:
+                if(self.clickUserLocaltion == 1){
+                    self.clickUserLocaltion = 2;
+                }
                  self.mapView.showsUserLocation = YES;
                 break;
             case kCLAuthorizationStatusNotDetermined:
@@ -762,7 +769,21 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
 }
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
-    
+    if(self.clickUserLocaltion > 1){
+        // 大于1的话，表示是定点了定位，并且还是发生定位权限变化，需要自动回到用户当前位置
+        if (self.pickingRegion) {
+            [self updateMapViewWithRegionDict:nil animated:YES];
+        } else {
+            self.clickUserLocaltion = -1;
+            CLLocationCoordinate2D coordinate = userLocation.coordinate;
+            [self moveMapViewTo:coordinate radius:-1 animated:YES];
+            __weak __typeof(self) weakSelf = self;
+            [self getAddressInfoWithLocation:self.mapView.userLocation.location completion:^(NSDictionary *addressDict) {
+                __strong __typeof(weakSelf) strongSelf = weakSelf;
+                [strongSelf updateAnnotationViewWithAddressDict:addressDict coordinate:coordinate shouldReadd:NO];
+            }];
+        }
+    }
 //    if (self.hasInitializedMapView) {
 //        return;
 //    }
