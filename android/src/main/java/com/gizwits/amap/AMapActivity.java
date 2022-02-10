@@ -134,6 +134,8 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
   private static final int REQUEST_SEARCH_ADDRESS = 10000;
   public static final String KEY_IS_AMAP = "isAmap";
   private boolean isModifyAddress;
+  private boolean needCheckPermission = false;
+
   public static final String RESULT = "result";
   private MapView mapView;
   private AMap aMap;
@@ -366,6 +368,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
           .setPositiveButton(this.openLocationSettingsText, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+              needCheckPermission = true;
               context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             }
           })
@@ -495,6 +498,11 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
 
   protected void onResume() {
     super.onResume();
+
+    if (needCheckPermission) {
+      needCheckPermission = false;
+      checkPermisssion(AMapActivity.this);
+    }
 
     // 如果一开始是true，变成了false 需要关闭activity
     boolean currentPermission = hasLocationPermission(AMapActivity.this);

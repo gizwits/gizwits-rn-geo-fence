@@ -1,7 +1,7 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.12-sanxiong",
-  "description": "iOS点击了定位按钮后，没有权限情况下，修改完app权限会回到app会自动回到用户定位",
+  "version": "3.0.13-sanxiong",
+  "description": "安卓，打开GPS后自动请求权限",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
