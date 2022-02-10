@@ -1,6 +1,6 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.10-sanxiong",
+  "version": "3.0.11-sanxiong",
   "description": "iOS点击了定位按钮后，没有权限情况下，修改完app权限会回到app会自动回到用户定位",
   "main": "index.js",
   "scripts": {
