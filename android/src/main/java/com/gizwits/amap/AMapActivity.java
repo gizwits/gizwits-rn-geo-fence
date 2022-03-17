@@ -50,24 +50,26 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.AMapLocationClientOption.AMapLocationMode;
-import com.amap.api.maps2d.AMap;
-import com.amap.api.maps2d.AMapOptions;
-import com.amap.api.maps2d.CameraUpdate;
-import com.amap.api.maps2d.CameraUpdateFactory;
-import com.amap.api.maps2d.CoordinateConverter;
-import com.amap.api.maps2d.MapView;
-import com.amap.api.maps2d.AMap.InfoWindowAdapter;
-import com.amap.api.maps2d.AMap.OnCameraChangeListener;
-import com.amap.api.maps2d.AMap.OnMapClickListener;
-import com.amap.api.maps2d.AMap.OnMapLoadedListener;
-import com.amap.api.maps2d.CoordinateConverter.CoordType;
-import com.amap.api.maps2d.model.BitmapDescriptorFactory;
-import com.amap.api.maps2d.model.CameraPosition;
-import com.amap.api.maps2d.model.LatLng;
-import com.amap.api.maps2d.model.Marker;
-import com.amap.api.maps2d.model.MarkerOptions;
-import com.amap.api.maps2d.model.MyLocationStyle;
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapOptions;
+import com.amap.api.maps.CameraUpdate;
+import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.CoordinateConverter;
+import com.amap.api.maps.MapView;
+import com.amap.api.maps.AMap.InfoWindowAdapter;
+import com.amap.api.maps.AMap.OnCameraChangeListener;
+import com.amap.api.maps.AMap.OnMapClickListener;
+import com.amap.api.maps.AMap.OnMapLoadedListener;
+import com.amap.api.maps.CoordinateConverter.CoordType;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.CameraPosition;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.core.AMapException;
+import com.amap.api.services.core.ServiceSettings;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeAddress;
@@ -201,7 +203,11 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     myLocationStyle.interval(2000);
     aMap.setMyLocationStyle(myLocationStyle);
     this.checkPermisssion(this);
-    this.initMap();
+    try {
+      this.initMap();
+    } catch (AMapException e) {
+      e.printStackTrace();
+    }
     this.initEvent();
     this.initParams(true);
     this.mIsAmapDisplay = true;
@@ -400,9 +406,14 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
 
   }
 
-  private void initMap() {
+  private void initMap() throws AMapException {
+    Log.e("AmapActivity", "initMap");
+//    ServiceSettings.updatePrivacyShow(this, true, true);
+//    ServiceSettings.updatePrivacyAgree(this,true);
+
     this.mIsAmapDisplay = true;
     this.geocodeSearch = new GeocodeSearch(this);
+
     this.geocodeSearch.setOnGeocodeSearchListener(this);
     this.aMapLocationClient = new AMapLocationClient(this);
     this.aMapLocationClient.setLocationListener(this);
@@ -547,6 +558,9 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if (this.mapView != null) {
       this.mapView.onDestroy();
     }
+    if (this.aMapLocationClient != null) {
+      this.aMapLocationClient.onDestroy();
+    }
     if ( gps_presenter != null ){
       gps_presenter.onDestroy();
     }
@@ -562,10 +576,17 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
   }
 
   public void onBackPressed() {
-    this.result = String.valueOf(1);
+    JSONObject json = new JSONObject();
+
+    try {
+      json.put("resultCode", 1);
+    } catch (JSONException var6) {
+      var6.printStackTrace();
+    }
+    this.result = json.toString();
     Intent intent = new Intent();
     intent.putExtra("result", this.result);
-    this.setResult(-1, intent);
+    this.setResult(6, intent);
     this.finish();
   }
 
@@ -678,7 +699,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
 
   private void transformFromWGSToGCJ(double lat, double lon) {
     LatLng latLng = new LatLng(lat, lon);
-    CoordinateConverter converter = new CoordinateConverter();
+    CoordinateConverter converter = new CoordinateConverter(this.getApplicationContext());
     converter.from(CoordType.GPS);
     converter.coord(latLng);
     LatLng desLatLng = converter.convert();
@@ -733,7 +754,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     return false;
   }
 
-  private void changeToAmapView() {
+  private void changeToAmapView() throws AMapException {
     if (this.googlemap != null) {
       this.zoom = this.googlemap.getCameraPosition().zoom;
       this.latitude = this.googlemap.getCameraPosition().target.latitude;
@@ -788,14 +809,22 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     this.latitude = cameraPosition.target.latitude;
     this.zoom = cameraPosition.zoom;
     if (GPSUtil.isInArea(this.latitude, this.longitude) && !this.mIsAmapDisplay) {
-      this.changeToAmapView();
+      try {
+        this.changeToAmapView();
+      } catch (AMapException e) {
+        e.printStackTrace();
+      }
     }
 
   }
 
   public void onLocationChanged(AMapLocation aMapLocation) {
     if (aMapLocation.getErrorCode() == 0) {
-      this.checkLocation(aMapLocation);
+      try {
+        this.checkLocation(aMapLocation);
+      } catch (AMapException e) {
+        e.printStackTrace();
+      }
     } else {
       Intent intent;
       if (aMapLocation.getErrorCode() == 7) {
@@ -813,7 +842,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
 
   }
 
-  private void checkLocation(AMapLocation location) {
+  private void checkLocation(AMapLocation location) throws AMapException {
     if (this.isModifyAddress) {
       this.isModifyAddress = false;
     } else {

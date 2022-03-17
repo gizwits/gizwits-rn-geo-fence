@@ -13,8 +13,9 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.maps2d.CoordinateConverter;
-import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps.CoordinateConverter;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
@@ -116,7 +117,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
 
 
     @ReactMethod
-    public void getAddressInfo(ReadableMap readableMap, Callback callback) {
+    public void getAddressInfo(ReadableMap readableMap, Callback callback) throws AMapException {
         JSONObject args = readable2JsonObject(readableMap);
         getAddressInfoCallback = callback;
         double lat = 0;
@@ -134,7 +135,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
         }
     }
 
-    private void getGPSAddressInfoFromAMap(double lat, double lon) {
+    private void getGPSAddressInfoFromAMap(double lat, double lon) throws AMapException {
         GeocodeSearch geocodeSearch = new GeocodeSearch(reactContext);
         geocodeSearch.setOnGeocodeSearchListener(this);
         LatLonPoint latLngPoint = new LatLonPoint(lat, lon);
@@ -386,7 +387,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
             Log.i("CordovaLog", e.getLocalizedMessage());
         }
         LatLng latLng = new LatLng(lat, lon);
-        CoordinateConverter converter = new CoordinateConverter();
+        CoordinateConverter converter = new CoordinateConverter(this.reactContext);
         converter.from(CoordinateConverter.CoordType.GPS);
         converter.coord(latLng);
         LatLng desLatLng = converter.convert();
@@ -441,7 +442,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
             Log.i("CordovaLog", e.getLocalizedMessage());
         }
         LatLng latLng = new LatLng(lat, lon);
-        CoordinateConverter converter = new CoordinateConverter();
+        CoordinateConverter converter = new CoordinateConverter(this.reactContext);
         converter.from(CoordinateConverter.CoordType.BAIDU);
         converter.coord(latLng);
         LatLng desLatLng = converter.convert();
@@ -530,7 +531,8 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
             JSONObject jsonObject = new JSONObject();
             try {
                 if (resultCode == Activity.RESULT_OK && intent != null) {
-                    String code = intent.getStringExtra("result");
+
+                  String code = intent.getStringExtra("result");
                     jsonObject = new JSONObject(code);
                     sendResultEvent(pickAddressCallback, jsonObject, null);
                 } else if (intent != null) {

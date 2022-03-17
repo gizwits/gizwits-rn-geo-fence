@@ -3,7 +3,11 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 26
 
-
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 
     defaultConfig {
         minSdkVersion 16
@@ -29,8 +33,7 @@ android {
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   implementation files('libs/AMap_Location_V5.5.1_20211008.jar')
-  implementation files('libs/Amap_2DMap_V6.0.0_20191106.jar')
-  implementation files('libs/AMap_Search_V6.9.3_20190722.jar')
+  implementation files('libs/AMap3DMap_5.8.0_AMapSearch_6.9.2_20191009.jar')
   implementation 'com.android.support:appcompat-v7:27.1.1'
   compile 'com.facebook.react:react-native:+'
 

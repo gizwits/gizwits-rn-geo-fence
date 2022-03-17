@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+
+import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
@@ -100,7 +102,11 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
     this.iv_search.setOnClickListener(this);
     this.address_list.setOnBottomListener(new OnClickListener() {
       public void onClick(View v) {
-        SearchAddressActivity.this.poiSearch(SearchAddressActivity.this.adapter.getCount() / 20 + 1, SearchAddressActivity.this.et_search.getText().toString());
+        try {
+          SearchAddressActivity.this.poiSearch(SearchAddressActivity.this.adapter.getCount() / 20 + 1, SearchAddressActivity.this.et_search.getText().toString());
+        } catch (AMapException e) {
+          e.printStackTrace();
+        }
       }
     });
     this.et_search.addTextChangedListener(new TextWatcher() {
@@ -114,7 +120,11 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
         } else {
           SearchAddressActivity.this.adapter.clear();
           SearchAddressActivity.this.address_list.showNoMore();
-          SearchAddressActivity.this.poiSearch(1, SearchAddressActivity.this.et_search.getText().toString());
+          try {
+            SearchAddressActivity.this.poiSearch(1, SearchAddressActivity.this.et_search.getText().toString());
+          } catch (AMapException e) {
+            e.printStackTrace();
+          }
         }
 
       }
@@ -204,7 +214,7 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
 
   }
 
-  private void poiSearch(int page, String str) {
+  private void poiSearch(int page, String str) throws AMapException {
     if (this.mIsAmapDisplay) {
       Query mPoiSearchQuery = new Query(str, "", "");
       mPoiSearchQuery.setPageSize(20);
@@ -291,7 +301,11 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
       this.onBackPressed();
     } else if (v.getId() == id.iv_search) {
       this.adapter.clear();
-      this.poiSearch(1, this.et_search.getText().toString());
+      try {
+        this.poiSearch(1, this.et_search.getText().toString());
+      } catch (AMapException e) {
+        e.printStackTrace();
+      }
     } else if (v.getId() == id.tv_right) {
       this.setResult(-1);
       this.finish();
