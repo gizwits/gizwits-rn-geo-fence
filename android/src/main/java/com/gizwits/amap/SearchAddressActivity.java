@@ -23,7 +23,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
@@ -104,7 +103,7 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
       public void onClick(View v) {
         try {
           SearchAddressActivity.this.poiSearch(SearchAddressActivity.this.adapter.getCount() / 20 + 1, SearchAddressActivity.this.et_search.getText().toString());
-        } catch (AMapException e) {
+        } catch (Exception e) {
           e.printStackTrace();
         }
       }
@@ -122,7 +121,7 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
           SearchAddressActivity.this.address_list.showNoMore();
           try {
             SearchAddressActivity.this.poiSearch(1, SearchAddressActivity.this.et_search.getText().toString());
-          } catch (AMapException e) {
+          } catch (Exception e) {
             e.printStackTrace();
           }
         }
@@ -214,7 +213,7 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
 
   }
 
-  private void poiSearch(int page, String str) throws AMapException {
+  private void poiSearch(int page, String str) throws Exception {
     if (this.mIsAmapDisplay) {
       Query mPoiSearchQuery = new Query(str, "", "");
       mPoiSearchQuery.setPageSize(20);
@@ -303,7 +302,7 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
       this.adapter.clear();
       try {
         this.poiSearch(1, this.et_search.getText().toString());
-      } catch (AMapException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     } else if (v.getId() == id.tv_right) {

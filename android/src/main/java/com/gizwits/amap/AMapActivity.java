@@ -68,7 +68,6 @@ import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.core.LatLonPoint;
-import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.ServiceSettings;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
@@ -205,7 +204,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     this.checkPermisssion(this);
     try {
       this.initMap();
-    } catch (AMapException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
     this.initEvent();
@@ -406,10 +405,12 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
 
   }
 
-  private void initMap() throws AMapException {
+  private void initMap() throws Exception {
     Log.e("AmapActivity", "initMap");
-//    ServiceSettings.updatePrivacyShow(this, true, true);
-//    ServiceSettings.updatePrivacyAgree(this,true);
+  //  ServiceSettings.updatePrivacyShow(this, true, true);
+  //  ServiceSettings.updatePrivacyAgree(this,true);
+    AMapLocationClient.updatePrivacyAgree(this.getApplicationContext(), true);
+    AMapLocationClient.updatePrivacyShow(this.getApplicationContext(), true, true);
 
     this.mIsAmapDisplay = true;
     this.geocodeSearch = new GeocodeSearch(this);
@@ -754,7 +755,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     return false;
   }
 
-  private void changeToAmapView() throws AMapException {
+  private void changeToAmapView() throws Exception {
     if (this.googlemap != null) {
       this.zoom = this.googlemap.getCameraPosition().zoom;
       this.latitude = this.googlemap.getCameraPosition().target.latitude;
@@ -811,7 +812,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if (GPSUtil.isInArea(this.latitude, this.longitude) && !this.mIsAmapDisplay) {
       try {
         this.changeToAmapView();
-      } catch (AMapException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }
@@ -822,7 +823,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
     if (aMapLocation.getErrorCode() == 0) {
       try {
         this.checkLocation(aMapLocation);
-      } catch (AMapException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     } else {
@@ -842,7 +843,7 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
 
   }
 
-  private void checkLocation(AMapLocation location) throws AMapException {
+  private void checkLocation(AMapLocation location) throws Exception {
     if (this.isModifyAddress) {
       this.isModifyAddress = false;
     } else {

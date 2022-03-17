@@ -15,7 +15,7 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.CoordinateConverter;
 import com.amap.api.maps.model.LatLng;
-import com.amap.api.services.core.AMapException;
+//import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
@@ -103,7 +103,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
     }
 
     @ReactMethod
-    public void getCurrentLocation(Callback callback) {
+    public void getCurrentLocation(Callback callback) throws Exception {
         getCurrentLocationCallback = callback;
         AMapLocationClient aMapLocationClient = new AMapLocationClient(reactContext);
         aMapLocationClient.setLocationListener(this);
@@ -117,7 +117,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
 
 
     @ReactMethod
-    public void getAddressInfo(ReadableMap readableMap, Callback callback) throws AMapException {
+    public void getAddressInfo(ReadableMap readableMap, Callback callback) throws Exception {
         JSONObject args = readable2JsonObject(readableMap);
         getAddressInfoCallback = callback;
         double lat = 0;
@@ -135,7 +135,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
         }
     }
 
-    private void getGPSAddressInfoFromAMap(double lat, double lon) throws AMapException {
+    private void getGPSAddressInfoFromAMap(double lat, double lon) throws Exception {
         GeocodeSearch geocodeSearch = new GeocodeSearch(reactContext);
         geocodeSearch.setOnGeocodeSearchListener(this);
         LatLonPoint latLngPoint = new LatLonPoint(lat, lon);

@@ -9,6 +9,10 @@ android {
         }
     }
 
+    repositories {
+        mavenCentral()
+    }
+
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 26
@@ -31,9 +35,10 @@ android {
 //}
 
 dependencies {
-  implementation fileTree(include: ['*.jar'], dir: 'libs')
-  implementation files('libs/AMap_Location_V5.5.1_20211008.jar')
-  implementation files('libs/AMap3DMap_5.8.0_AMapSearch_6.9.2_20191009.jar')
+  implementation 'com.amap.api:3dmap:8.0.1'
+  implementation 'com.amap.api:location:5.6.0'
+  implementation 'com.amap.api:search:6.9.2'
+  
   implementation 'com.android.support:appcompat-v7:27.1.1'
   compile 'com.facebook.react:react-native:+'
 
