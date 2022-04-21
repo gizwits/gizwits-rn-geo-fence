@@ -106,6 +106,10 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
     public void getCurrentLocation(Callback callback) throws Exception {
         getCurrentLocationCallback = callback;
         AMapLocationClient aMapLocationClient = new AMapLocationClient(reactContext);
+
+        aMapLocationClient.updatePrivacyAgree(this.getApplicationContext(), true);
+        aMapLocationClient.updatePrivacyShow(this.getApplicationContext(), true, true);
+
         aMapLocationClient.setLocationListener(this);
         AMapLocationClientOption clientOption = new AMapLocationClientOption();
         clientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
