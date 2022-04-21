@@ -660,7 +660,7 @@ NSString *GizGetSubaddressFromDictionary(NSDictionary *addressDict) {
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
     
-    if (self.pickingRegion) {
+    if (self.pickingRegion && self.hasInitializedMapView) {
         // 选取区域时，区域更新后，更新半径及地址信息
         GizRegionBackgroundView *regionView = (GizRegionBackgroundView *)self.regionBackgroundView;
         
