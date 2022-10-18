@@ -1,7 +1,7 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.0.24",
-  "description": "获取定位前，确认AMap协议",
+  "version": "3.1.0",
+  "description": "兼容70RN",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
