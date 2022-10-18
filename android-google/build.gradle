@@ -29,11 +29,11 @@ android {
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   implementation 'com.android.support:appcompat-v7:27.1.1'
-  compile 'com.facebook.react:react-native:+'
+  implementation 'com.facebook.react:react-native:+'
 
-  compile 'com.google.android.gms:play-services-maps:15.0.1'
-  compile 'com.google.android.gms:play-services-places:15.0.1'
-  compile 'com.google.android.gms:play-services-location:15.0.1'
-  compile 'com.google.code.gson:gson:2.4'
+  compimplementationile 'com.google.android.gms:play-services-maps:15.0.1'
+  implementation 'com.google.android.gms:play-services-places:15.0.1'
+  implementation 'com.google.android.gms:play-services-location:15.0.1'
+  implementation 'com.google.code.gson:gson:2.4'
 
 }
