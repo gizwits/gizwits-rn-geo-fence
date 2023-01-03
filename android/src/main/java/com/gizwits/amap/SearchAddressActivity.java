@@ -174,6 +174,14 @@ public class SearchAddressActivity extends Activity implements OnPoiSearchListen
           this.tv_right.setTextColor(ColorUtil.parseStrColor(themeColor));
         }
 
+        if (jb.has("searchTips")) {
+          this.et_search.setText(jb.getString("searchTips"));
+        }
+
+        if (jb.has("noResultTips")) {
+          this.tv_none_search.setText(jb.getString("noResultTips"));
+        }
+
         if (jb.has("navi_bg")) {
           this.rl_top.setBackgroundColor(ColorUtil.parseStrColor(jb.getString("navi_bg")));
         }

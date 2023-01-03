@@ -264,6 +264,10 @@ public class AMapActivity extends Activity implements OnCameraMoveListener, OnMa
           this.rl_top.setBackgroundColor(ColorUtil.parseStrColor(jb.getString("navi_bg")));
         }
 
+        if (jb.has("searchTips")) {
+          this.tv_search.setText(jb.getString("searchTips"));
+        }
+
         if (jb.has("titleColor")) {
           this.tv_title.setTextColor(ColorUtil.parseStrColor(jb.getString("titleColor")));
         }

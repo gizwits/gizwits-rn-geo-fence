@@ -24,6 +24,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.gizwitsgeo.R;
 
@@ -40,6 +42,7 @@ public class DropDownListView extends ListView implements OnScrollListener {
   private String footerLoadingText;
   private String footerNoMoreText;
   private Context context;
+  private JSONObject themeInfo;
   private RelativeLayout headerLayout;
   private ImageView headerImage;
   private ProgressBar headerProgressBar;
@@ -96,6 +99,12 @@ public class DropDownListView extends ListView implements OnScrollListener {
     super.setOnScrollListener(this);
   }
 
+  public void setThemeInfo(JSONObject jb) {
+    themeInfo = jb;
+    initDropDownStyle();
+  }
+
+
   private void initDropDownStyle() {
     if (this.headerLayout != null) {
       if (this.isDropDownStyle) {
@@ -105,6 +114,31 @@ public class DropDownListView extends ListView implements OnScrollListener {
       }
 
     } else if (this.isDropDownStyle) {
+
+      String drop_down_list_header_default_text = this.context.getString(string.drop_down_list_header_default_text);
+      String drop_down_list_header_pull_text = this.context.getString(string.drop_down_list_header_pull_text);
+      String drop_down_list_header_release_text = this.context.getString(string.drop_down_list_header_release_text);
+      String drop_down_list_header_loading_text = this.context.getString(string.drop_down_list_header_loading_text);
+
+      try {
+        if (themeInfo != null) {
+          if (themeInfo.has("dropDownListeDefaultTips")) {
+            drop_down_list_header_default_text = themeInfo.getString("dropDownListeDefaultTips");
+          }
+          if (themeInfo.has("dropDownListePullTips")) {
+            drop_down_list_header_pull_text = themeInfo.getString("dropDownListePullTips");
+          }
+          if (themeInfo.has("dropDownListeReleaseTips")) {
+            drop_down_list_header_release_text = themeInfo.getString("dropDownListeReleaseTips");
+          }
+          if (themeInfo.has("dropDownListeLoadingTips")) {
+            drop_down_list_header_loading_text = themeInfo.getString("dropDownListeLoadingTips");
+          }
+        }
+      }catch (JSONException var8) {
+        var8.printStackTrace();
+      }
+
       this.headerReleaseMinDistance = this.context.getResources().getDimensionPixelSize(R.dimen.drop_down_list_header_release_min_distance);
       this.flipAnimation = new RotateAnimation(0.0F, 180.0F, 1, 0.5F, 1, 0.5F);
       this.flipAnimation.setInterpolator(new LinearInterpolator());
@@ -114,10 +148,12 @@ public class DropDownListView extends ListView implements OnScrollListener {
       this.reverseFlipAnimation.setInterpolator(new LinearInterpolator());
       this.reverseFlipAnimation.setDuration(250L);
       this.reverseFlipAnimation.setFillAfter(true);
-      this.headerDefaultText = this.context.getString(R.string.drop_down_list_header_default_text);
-      this.headerPullText = this.context.getString(R.string.drop_down_list_header_pull_text);
-      this.headerReleaseText = this.context.getString(R.string.drop_down_list_header_release_text);
-      this.headerLoadingText = this.context.getString(R.string.drop_down_list_header_loading_text);
+
+      this.headerDefaultText = drop_down_list_header_default_text;
+      this.headerPullText = drop_down_list_header_pull_text;
+      this.headerReleaseText = drop_down_list_header_release_text;
+      this.headerLoadingText = drop_down_list_header_loading_text;
+
       LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       this.headerLayout = (RelativeLayout)inflater.inflate(R.layout.drop_down_list_header, this, false);
       this.headerText = (TextView)this.headerLayout.findViewById(R.id.drop_down_list_header_default_text);
