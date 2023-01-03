@@ -26,6 +26,11 @@ import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.gizwitsgeo.R.dimen;
+import com.gizwitsgeo.R.id;
+import com.gizwitsgeo.R.layout;
+import com.gizwitsgeo.R.string;
+import com.gizwitsgeo.R.styleable;
 
 import com.gizwitsgeo.R;
 

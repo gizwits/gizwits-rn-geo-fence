@@ -164,7 +164,7 @@ public class SearchAddressActivity extends Activity implements
         }
 
         if (jb.has("searchTips")) {
-          this.et_search.setText(jb.getString("searchTips"));
+          this.et_search.setHint(jb.getString("searchTips"));
         }
 
         if (jb.has("noResultTips")) {
