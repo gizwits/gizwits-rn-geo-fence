@@ -6,6 +6,8 @@
 package com.gizwits.amap.dao;
 
 import android.content.ContentValues;
+import android.text.TextUtils;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
