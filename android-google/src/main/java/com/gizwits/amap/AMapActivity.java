@@ -226,7 +226,7 @@ public class AMapActivity extends Activity implements GoogleApiClient.OnConnecti
         this.mIsAmapDisplay = false;
         this.mGoogleMapView = new MapView(this, (new GoogleMapOptions()).camera(new CameraPosition(new LatLng(this.latitude, this.longitude), this.zoom, 0.0F, 0.0F)));
         this.mGoogleMapView.setLayoutParams(new LayoutParams(-1, -1));
-        this.fusedLocationProviderClient = new FusedLocationProviderClient(this);
+        this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         this.rl_map.addView(this.mGoogleMapView);
         this.handler.sendEmptyMessageDelayed(0, 500L);

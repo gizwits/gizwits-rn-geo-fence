@@ -80,7 +80,7 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
     public RNGizwitsRnGeofenceModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-        this.fusedLocationProviderClient = new FusedLocationProviderClient(reactContext);
+        this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(reactContext);
 
     }
 
