@@ -64,8 +64,13 @@ public class AddressDao extends SQLiteOpenHelper {
     if (cursor != null && cursor.getCount() > 0) {
       while(cursor.moveToNext()) {
         AddressItem addressItem = new AddressItem();
-        addressItem.setName(cursor.getString(cursor.getColumnIndex("name")));
-        addressItem.setAddress(cursor.getString(cursor.getColumnIndex("address")));
+
+        String name = cursor.getString(cursor.getColumnIndex("name"));
+        String addressName = cursor.getString(cursor.getColumnIndex("address"));
+
+        addressItem.setName(TextUtils.isEmpty(name)?"--": name);
+        addressItem.setAddress(TextUtils.isEmpty(addressName)?"--": addressName);
+
         addressItem.setLatitude(Double.valueOf(cursor.getString(cursor.getColumnIndex("latitude"))));
         addressItem.setLongitude(Double.valueOf(cursor.getString(cursor.getColumnIndex("longitude"))));
         addressItemList.add(addressItem);

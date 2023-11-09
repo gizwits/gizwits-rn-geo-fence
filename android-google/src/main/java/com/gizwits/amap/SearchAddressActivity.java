@@ -232,7 +232,10 @@ public class SearchAddressActivity extends Activity implements
           Log.e("SearchAddressActivity", "address:" + address.toString());
           AddressItem addressItem = new AddressItem();
           addressItem.setCity(address.getLocality());
-          addressItem.setName(TextUtils.isEmpty(address.getFeatureName())?address.getLocality():address.getFeatureName());
+
+          String addressName = TextUtils.isEmpty(address.getFeatureName())?address.getLocality():address.getFeatureName()
+          addressItem.setName(TextUtils.isEmpty(addressName)?"--":addressName);
+
           addressItem.setLatitude(address.getLatitude());
           addressItem.setLongitude(address.getLongitude());
           addressItem.setAddress(address.getAddressLine(0));
