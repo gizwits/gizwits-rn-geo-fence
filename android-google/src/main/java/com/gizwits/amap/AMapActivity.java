@@ -497,7 +497,15 @@ public class AMapActivity extends Activity implements GoogleApiClient.OnConnecti
             try {
                 LocationManager location_manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 location_manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 2000, this);
-                location_manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 2000, this);
+
+                Location location = location_manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                Location gps_location = location_manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (gps_location != null) {
+                    this.onLocationChanged(gps_location);
+                } else if (location != null) {
+                    this.onLocationChanged(location);
+                }
 //                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
 //                fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
 //                    @Override
