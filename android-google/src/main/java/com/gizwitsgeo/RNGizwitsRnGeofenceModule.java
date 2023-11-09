@@ -46,6 +46,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.gizwits.amap.AMapActivity;
 import com.gizwits.amap.utils.GPSUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
