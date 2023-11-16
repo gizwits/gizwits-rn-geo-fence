@@ -233,7 +233,7 @@ public class SearchAddressActivity extends Activity implements
           AddressItem addressItem = new AddressItem();
           addressItem.setCity(address.getLocality());
 
-          String addressName = TextUtils.isEmpty(address.getFeatureName())?address.getLocality():address.getFeatureName()
+          String addressName = TextUtils.isEmpty(address.getFeatureName())?address.getLocality():address.getFeatureName();
           addressItem.setName(TextUtils.isEmpty(addressName)?"--":addressName);
 
           addressItem.setLatitude(address.getLatitude());
