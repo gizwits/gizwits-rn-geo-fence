@@ -22,11 +22,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
-//import com.amap.api.services.core.PoiItem;
-//import com.amap.api.services.poisearch.PoiResult;
-//import com.amap.api.services.poisearch.PoiSearch;
-//import com.amap.api.services.poisearch.PoiSearch.OnPoiSearchListener;
-//import com.amap.api.services.poisearch.PoiSearch.Query;
+
 import com.gizwitsgeo.R.id;
 import com.gizwitsgeo.R.layout;
 import com.gizwits.amap.adapter.SearchAddressAdapter;

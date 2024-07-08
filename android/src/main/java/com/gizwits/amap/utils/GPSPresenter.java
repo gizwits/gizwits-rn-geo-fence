@@ -3,6 +3,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.location.LocationManager;
 
 /**
@@ -28,7 +29,11 @@ public class GPSPresenter {
         IntentFilter filter = new IntentFilter();
         filter.addAction( GPS_ACTION );
         receiver = new Receiver() ;
-        mContext.registerReceiver(receiver, filter);
+        if (Build.VERSION.SDK_INT >= 34 && mContext.getApplicationInfo().targetSdkVersion >= 34) {
+            mContext.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED);
+        } else {
+            mContext.registerReceiver(receiver, filter);
+        }
     }
 
     /**

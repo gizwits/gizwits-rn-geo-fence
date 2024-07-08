@@ -36,36 +36,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.amap.api.location.AMapLocation;
-//import com.amap.api.location.AMapLocationClient;
-//import com.amap.api.location.AMapLocationClientOption;
-//import com.amap.api.location.AMapLocationListener;
-//import com.amap.api.location.AMapLocationClientOption.AMapLocationMode;
-//import com.amap.api.maps2d.AMap;
-//import com.amap.api.maps2d.AMapOptions;
-//import com.amap.api.maps2d.CameraUpdate;
-//import com.amap.api.maps2d.CameraUpdateFactory;
-//import com.amap.api.maps2d.CoordinateConverter;
-//import com.amap.api.maps2d.MapView;
-//import com.amap.api.maps2d.AMap.InfoWindowAdapter;
-//import com.amap.api.maps2d.AMap.OnCameraChangeListener;
-//import com.amap.api.maps2d.AMap.OnMapClickListener;
-//import com.amap.api.maps2d.AMap.OnMapLoadedListener;
-//import com.amap.api.maps2d.CoordinateConverter.CoordType;
-//import com.amap.api.maps2d.model.BitmapDescriptorFactory;
-//import com.amap.api.maps2d.model.CameraPosition;
-//import com.amap.api.maps2d.model.LatLng;
-//import com.amap.api.maps2d.model.Marker;
-//import com.amap.api.maps2d.model.MarkerOptions;
-//import com.amap.api.maps2d.model.MyLocationStyle;
-//import com.amap.api.services.core.LatLonPoint;
-//import com.amap.api.services.geocoder.GeocodeResult;
-//import com.amap.api.services.geocoder.GeocodeSearch;
-//import com.amap.api.services.geocoder.RegeocodeAddress;
-//import com.amap.api.services.geocoder.RegeocodeQuery;
-//import com.amap.api.services.geocoder.RegeocodeResult;
-//import com.amap.api.services.geocoder.GeocodeSearch.OnGeocodeSearchListener;
-
 
 import com.gizwits.amap.bean.AddressItem;
 import com.gizwits.amap.utils.ColorUtil;
