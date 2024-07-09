@@ -1,6 +1,6 @@
 {
   "name": "react-native-gizwits-rn-geofence",
-  "version": "3.2.9",
+  "version": "3.2.10",
   "description": "升级谷歌sdk",
   "main": "index.js",
   "scripts": {
