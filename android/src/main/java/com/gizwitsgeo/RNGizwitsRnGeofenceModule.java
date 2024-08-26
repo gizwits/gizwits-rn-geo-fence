@@ -9,19 +9,6 @@ import android.location.Geocoder;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
-import com.amap.api.location.AMapLocationListener;
-import com.amap.api.maps.CoordinateConverter;
-import com.amap.api.maps.model.LatLng;
-//import com.amap.api.services.core.AMapException;
-import com.amap.api.services.core.LatLonPoint;
-import com.amap.api.services.geocoder.GeocodeResult;
-import com.amap.api.services.geocoder.GeocodeSearch;
-import com.amap.api.services.geocoder.RegeocodeAddress;
-import com.amap.api.services.geocoder.RegeocodeQuery;
-import com.amap.api.services.geocoder.RegeocodeResult;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -35,8 +22,6 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.gizwits.amap.AMapActivity;
-import com.gizwits.amap.utils.GPSUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,7 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implements ActivityEventListener,LifecycleEventListener, AMapLocationListener, GeocodeSearch.OnGeocodeSearchListener {
+public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implements ActivityEventListener,LifecycleEventListener {
     private String themeInfo;
     public  int REQUEST_CODE = 123;
     ReactApplicationContext reactContext;
@@ -87,128 +72,23 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
 
     @ReactMethod
     public void authorizationStatus(Callback callback) {
-        int i = ContextCompat.checkSelfPermission(reactContext, Manifest.permission.ACCESS_FINE_LOCATION);
-        JSONObject jsonObject = new JSONObject();
-        try {
-            if (i != PackageManager.PERMISSION_GRANTED) {
-                jsonObject.put("status", AUTHORIZATION_STATUS_AUTHORIZED_ALWAYS);
-                sendResultEvent(callback, jsonObject, null);
-            } else {
-                jsonObject.put("status", AUTHORIZATION_STATUS_NOT_DETERMINED);
-                sendResultEvent(callback, jsonObject, null);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        
     }
 
     @ReactMethod
     public void getCurrentLocation(Callback callback) throws Exception {
-        AMapLocationClient.updatePrivacyShow(this.reactContext, true, true);
-        AMapLocationClient.updatePrivacyAgree(this.reactContext, true);
-        getCurrentLocationCallback = callback;
-        AMapLocationClient aMapLocationClient = new AMapLocationClient(this.reactContext);
         
-        aMapLocationClient.setLocationListener(this);
-        AMapLocationClientOption clientOption = new AMapLocationClientOption();
-        clientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        clientOption.setOnceLocation(true);
-        clientOption.setLocationCacheEnable(false);
-        aMapLocationClient.setLocationOption(clientOption);
-        aMapLocationClient.startLocation();
     }
 
 
     @ReactMethod
     public void getAddressInfo(ReadableMap readableMap, Callback callback) throws Exception {
-        JSONObject args = readable2JsonObject(readableMap);
-        getAddressInfoCallback = callback;
-        double lat = 0;
-        double lon = 0;
-        try {
-            lat = args.getDouble(KEY_LATITUDE);
-            lon = args.getDouble(KEY_LONGTITUDE);
-        } catch (JSONException e) {
-            Log.i("CordovaLog", e.getLocalizedMessage());
-        }
-        if (GPSUtil.isInArea(lat, lon)) {
-            getGPSAddressInfoFromAMap(lat, lon);
-        } else {
-            getGPSAdrresInfoFromGoogleMap(lat, lon);
-        }
-    }
-
-    private void getGPSAddressInfoFromAMap(double lat, double lon) throws Exception {
-        GeocodeSearch geocodeSearch = new GeocodeSearch(reactContext);
-        geocodeSearch.setOnGeocodeSearchListener(this);
-        LatLonPoint latLngPoint = new LatLonPoint(lat, lon);
-        RegeocodeQuery query = new RegeocodeQuery(latLngPoint, 200, GeocodeSearch.GPS);
-        geocodeSearch.getFromLocationAsyn(query);
-    }
-
-    private void getGPSAdrresInfoFromGoogleMap(double lat, double lon) {
-        Geocoder geocoder = new Geocoder(reactContext, Locale.getDefault());
-        JSONObject json = new JSONObject();
-        try {
-            List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
-            if (addresses != null && addresses.size() > 0) {
-                Address addr = addresses.get(0);
-                try {
-                    JSONArray js = new JSONArray();
-                    json.put("FormattedAddressLines", js.put(addresses.get(0).getAddressLine(0)));
-                    json.put("Street", "");
-                    json.put("Thoroughfare", "");
-                    json.put("Name", addr.getFeatureName());
-                    json.put("City", addr.getLocality());
-                    json.put("Country", addr.getCountryName());
-                    json.put("State", addr.getAdminArea());
-                    json.put("SubLocality", addr.getSubLocality());
-                    json.put("CountryCode", addr.getCountryCode());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.e("地址解析", json.toString());
-                sendResultEvent(getAddressInfoCallback, json, null);
-                return;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            json.put("code", 6);
-            sendResultEvent(getAddressInfoCallback, null, json);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        
     }
 
     @ReactMethod
     public void pickAddress(ReadableMap readableMap, Callback callback) {
-        Intent mapIntent = new Intent(reactContext, AMapActivity.class);
-        pickAddressCallback = callback;
-        // add config as intent extras
-        JSONObject args = readable2JsonObject(readableMap);
-        double lat = 0;
-        double lon = 0;
-        try {
-            lat = args.getDouble(KEY_LATITUDE);
-            lon = args.getDouble(KEY_LONGTITUDE);
-        } catch (JSONException e) {
-            Log.i("CordovaLog", e.getLocalizedMessage());
-        }
-        mapIntent.putExtra(KEY_LATITUDE, lat);
-        mapIntent.putExtra(KEY_LONGTITUDE, lon);
-        mapIntent.putExtra("action", "pickAddress");
-        mapIntent.putExtra("themeInfo", themeInfo);
-
-        // avoid calling other phonegap apps
-        mapIntent.setPackage(reactContext.getPackageName());
-        int requestcode = new Random().nextInt(1000);
-        reactContext.startActivityForResult(mapIntent, requestcode, null);
-        this.reactContext.addActivityEventListener(this);
-
-
+       
     }
 
 
@@ -357,173 +237,14 @@ public class RNGizwitsRnGeofenceModule extends ReactContextBaseJavaModule implem
      */
     @ReactMethod
     private void transformFromGCJToWGS(ReadableMap readableMap,Callback callback) {
-        JSONObject args = readable2JsonObject(readableMap);
-        double lat = 0;
-        double lon = 0;
-        try {
-            lat = args.getDouble(KEY_LATITUDE);
-            lon = args.getDouble(KEY_LONGTITUDE);
-        } catch (JSONException e) {
-            Log.i("CordovaLog", e.getLocalizedMessage());
-        }
-        double[] latlon = GPSUtil.gcj02_To_Gps84(lat, lon);
-        JSONObject json = new JSONObject();
-        try {
-            json.put(KEY_LATITUDE, latlon[0]);
-            json.put(KEY_LONGTITUDE, latlon[1]);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.e("jason", "transformFromGCJToWGS :" + json.toString());
-        sendResultEvent(callback, json, null);
+        
     }
 
     @ReactMethod
     private void transformFromWGSToGCJ(ReadableMap readableMap,Callback callback) {
-        JSONObject args = readable2JsonObject(readableMap);
-        double lat = 0;
-        double lon = 0;
-        try {
-            lat = args.getDouble(KEY_LATITUDE);
-            lon = args.getDouble(KEY_LONGTITUDE);
-        } catch (JSONException e) {
-            Log.i("CordovaLog", e.getLocalizedMessage());
-        }
-        LatLng latLng = new LatLng(lat, lon);
-        CoordinateConverter converter = new CoordinateConverter(this.reactContext);
-        converter.from(CoordinateConverter.CoordType.GPS);
-        converter.coord(latLng);
-        LatLng desLatLng = converter.convert();
-        JSONObject json = new JSONObject();
-        try {
-            json.put(KEY_LATITUDE, desLatLng.latitude);
-            json.put(KEY_LONGTITUDE, desLatLng.longitude);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        Log.e("jason", "transformFromWGSToGCJ :"+json.toString());
-        sendResultEvent(callback,json,null);
+        
     }
 
-    /**
-     * GCJ-02 转换为 BD-09
-     */
-    private void transformFromGCJToBaidu(ReadableMap readableMap,Callback callback) {
-        JSONObject args = readable2JsonObject(readableMap);
-        double lat = 0;
-        double lon = 0;
-        try {
-            lat = args.getDouble(KEY_LATITUDE);
-            lon = args.getDouble(KEY_LONGTITUDE);
-        } catch (JSONException e) {
-            Log.i("CordovaLog", e.getLocalizedMessage());
-        }
-        double[] latlon = GPSUtil.gcj02_To_Bd09(lat, lon);
-        JSONObject json = new JSONObject();
-        try {
-            json.put(KEY_LATITUDE, latlon[0]);
-            json.put(KEY_LONGTITUDE, latlon[1]);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        sendResultEvent(callback,json,null);
-    }
-
-    /**
-     * BD-09 转换为 GCJ-02
-     */
-    private void transformFromBaiduToGCJ(ReadableMap readableMap,Callback callback) {
-        JSONObject args = readable2JsonObject(readableMap);
-        double lat = 0;
-        double lon = 0;
-        try {
-            lat = args.getDouble(KEY_LATITUDE);
-            lon = args.getDouble(KEY_LONGTITUDE);
-        } catch (JSONException e) {
-            Log.i("CordovaLog", e.getLocalizedMessage());
-        }
-        LatLng latLng = new LatLng(lat, lon);
-        CoordinateConverter converter = new CoordinateConverter(this.reactContext);
-        converter.from(CoordinateConverter.CoordType.BAIDU);
-        converter.coord(latLng);
-        LatLng desLatLng = converter.convert();
-        JSONObject json = new JSONObject();
-        try {
-            json.put(KEY_LATITUDE, desLatLng.latitude);
-            json.put(KEY_LONGTITUDE, desLatLng.longitude);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        sendResultEvent(callback,json,null);
-    }
-
-
-    @Override
-    public void onLocationChanged(AMapLocation aMapLocation) {
-        if (getCurrentLocationCallback == null) {
-            return;
-        }
-        double[] latlon = GPSUtil.gcj02_To_Gps84(aMapLocation.getLatitude(), aMapLocation.getLongitude());
-        JSONObject json = new JSONObject();
-        try {
-            json.put(KEY_LATITUDE, latlon[0]);
-            json.put(KEY_LONGTITUDE, latlon[1]);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.e("jason", "transformFromGCJToWGS :" + json.toString());
-        sendResultEvent(getCurrentLocationCallback, json, null);
-    }
-
-
-    @Override
-    public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int rCode) {
-        if (getAddressInfoCallback == null) {
-            return;
-        }
-        try {
-            JSONObject json = new JSONObject();
-
-            if (rCode == 1000) {
-                RegeocodeAddress regeocodeAddress = regeocodeResult.getRegeocodeAddress();
-
-                JSONArray js = new JSONArray();
-                json.put("FormattedAddressLines", js.put(regeocodeAddress.getFormatAddress()));
-//				json.put("Street", regeocodeAddress.getRoads().get(0).getName());
-//				json.put("Thoroughfare", regeocodeAddress.getRoads().get(0).getName());
-                json.put("Street", "");
-                json.put("Thoroughfare", "");
-                json.put("Name", regeocodeAddress.getBuilding());
-                json.put("City", regeocodeAddress.getCity());
-                json.put("Country", regeocodeAddress.getCountry());
-                json.put("State", regeocodeAddress.getProvince());
-                json.put("SubLocality", regeocodeAddress.getDistrict());
-                json.put("CountryCode", "");
-
-                Log.e("jason", "address:" + json.toString());
-                sendResultEvent(getAddressInfoCallback, json, null);
-            } else if (rCode == 1008) {
-                json.put("code", 8);
-                sendResultEvent(getAddressInfoCallback, null, json);
-            } else if (rCode == 1002) {
-                //key 不正确或过期
-                json.put("code", 7);
-                sendResultEvent(getAddressInfoCallback, null, json);
-            } else {
-                json.put("code", 6);
-                sendResultEvent(getAddressInfoCallback, null, json);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
-
-    }
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent intent) {
